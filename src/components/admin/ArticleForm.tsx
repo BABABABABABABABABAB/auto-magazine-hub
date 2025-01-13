@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -53,7 +53,7 @@ export const ArticleForm = () => {
     setSubcategories(data);
   };
 
-  useState(() => {
+  useEffect(() => {
     fetchSubcategories();
   }, []);
 
