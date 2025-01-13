@@ -11,6 +11,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/use-toast";
+import { ArticleForm } from "./ArticleForm";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export const ArticlesManager = () => {
   const [articles, setArticles] = useState([]);
@@ -78,6 +86,22 @@ export const ArticlesManager = () => {
 
   return (
     <div className="space-y-6">
+      <div className="flex justify-end">
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="bg-magazine-red hover:bg-red-600">
+              Nouvel Article
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-4xl">
+            <DialogHeader>
+              <DialogTitle>Créer un nouvel article</DialogTitle>
+            </DialogHeader>
+            <ArticleForm />
+          </DialogContent>
+        </Dialog>
+      </div>
+
       <Table>
         <TableHeader>
           <TableRow>
