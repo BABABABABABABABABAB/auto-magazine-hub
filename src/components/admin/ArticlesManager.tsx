@@ -9,50 +9,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/use-toast";
 
 export const ArticlesManager = () => {
   const [articles, setArticles] = useState([]);
-  const [subcategories, setSubcategories] = useState([]);
-  const [newArticle, setNewArticle] = useState({
-    title: "",
-    content: "",
-    featured_image: "",
-    subcategory_id: "",
-  });
   const { toast } = useToast();
 
   useEffect(() => {
     fetchArticles();
-    fetchSubcategories();
   }, []);
-
-  const fetchSubcategories = async () => {
-    const { data, error } = await supabase
-      .from("subcategories")
-      .select("*")
-      .order("name", { ascending: true });
-
-    if (error) {
-      toast({
-        title: "Erreur",
-        description: "Impossible de charger les sous-catégories",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setSubcategories(data);
-  };
 
   const fetchArticles = async () => {
     const { data, error } = await supabase
@@ -70,31 +36,6 @@ export const ArticlesManager = () => {
     }
 
     setArticles(data);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const { data, error } = await supabase
-      .from("articles")
-      .insert([newArticle])
-      .select();
-
-    if (error) {
-      toast({
-        title: "Erreur",
-        description: "Impossible de créer l'article",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    toast({
-      title: "Succès",
-      description: "Article créé avec succès",
-    });
-
-    setNewArticle({ title: "", content: "", featured_image: "", subcategory_id: "" });
-    fetchArticles();
   };
 
   const handleDelete = async (id) => {
@@ -117,59 +58,33 @@ export const ArticlesManager = () => {
     fetchArticles();
   };
 
+  const toggleHidden = async (id, currentValue) => {
+    const { error } = await supabase
+      .from("articles")
+      .update({ hidden: !currentValue })
+      .eq("id", id);
+
+    if (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de modifier le statut de l'article",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    fetchArticles();
+  };
+
   return (
     <div className="space-y-6">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <Input
-          placeholder="Titre"
-          value={newArticle.title}
-          onChange={(e) =>
-            setNewArticle({ ...newArticle, title: e.target.value })
-          }
-          required
-        />
-        <Textarea
-          placeholder="Contenu"
-          value={newArticle.content}
-          onChange={(e) =>
-            setNewArticle({ ...newArticle, content: e.target.value })
-          }
-          required
-        />
-        <Input
-          placeholder="URL de l'image"
-          value={newArticle.featured_image}
-          onChange={(e) =>
-            setNewArticle({ ...newArticle, featured_image: e.target.value })
-          }
-          required
-        />
-        <Select
-          value={newArticle.subcategory_id}
-          onValueChange={(value) =>
-            setNewArticle({ ...newArticle, subcategory_id: value })
-          }
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Sélectionner une sous-catégorie" />
-          </SelectTrigger>
-          <SelectContent>
-            {subcategories.map((subcategory) => (
-              <SelectItem key={subcategory.id} value={subcategory.id}>
-                {subcategory.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Button type="submit">Ajouter un article</Button>
-      </form>
-
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Titre</TableHead>
-            <TableHead>Sous-catégorie</TableHead>
-            <TableHead>Date de création</TableHead>
+            <TableHead>Title</TableHead>
+            <TableHead>Category</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Hidden</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -179,14 +94,55 @@ export const ArticlesManager = () => {
               <TableCell>{article.title}</TableCell>
               <TableCell>{article.subcategories?.name}</TableCell>
               <TableCell>
-                {new Date(article.created_at).toLocaleDateString()}
+                <span className="px-2 py-1 text-sm rounded-full bg-green-100 text-green-800">
+                  {article.status || "draft"}
+                </span>
               </TableCell>
               <TableCell>
+                <Switch
+                  checked={article.hidden}
+                  onCheckedChange={() => toggleHidden(article.id, article.hidden)}
+                />
+              </TableCell>
+              <TableCell className="space-x-2">
+                <Button variant="outline" size="sm">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="w-4 h-4"
+                  >
+                    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                    <path d="m15 5 4 4" />
+                  </svg>
+                </Button>
                 <Button
-                  variant="destructive"
+                  variant="outline"
+                  size="sm"
                   onClick={() => handleDelete(article.id)}
                 >
-                  Supprimer
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="w-4 h-4"
+                  >
+                    <path d="M3 6h18" />
+                    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                  </svg>
                 </Button>
               </TableCell>
             </TableRow>
