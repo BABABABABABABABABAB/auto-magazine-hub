@@ -9,8 +9,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 const Admin = () => {
   return (
-    <div className="min-h-screen flex flex-col h-screen">
-      <header className="bg-magazine-red text-white p-6 flex justify-between items-center">
+    <div className="h-screen flex flex-col overflow-hidden">
+      <header className="bg-magazine-red text-white p-4 flex justify-between items-center shrink-0">
         <h1 className="text-3xl font-bold">Admin Dashboard</h1>
         <div className="space-x-4">
           <Button variant="outline" className="text-white border-white hover:bg-red-600">
@@ -22,28 +22,30 @@ const Admin = () => {
         </div>
       </header>
 
-      <ScrollArea className="flex-1 container mx-auto p-6 overflow-y-auto">
-        <Tabs defaultValue="articles" className="w-full">
-          <TabsList className="mb-4">
-            <TabsTrigger value="articles" className="text-lg">Articles</TabsTrigger>
-            <TabsTrigger value="categories" className="text-lg">Category Manager</TabsTrigger>
-            <TabsTrigger value="subcategories" className="text-lg">Subcategory Manager</TabsTrigger>
-          </TabsList>
-          <TabsContent value="articles">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold">Articles</h2>
-              <Button className="bg-magazine-red hover:bg-red-600">New Article</Button>
-            </div>
-            <ArticlesManager />
-          </TabsContent>
-          <TabsContent value="categories">
-            <CategoriesManager />
-          </TabsContent>
-          <TabsContent value="subcategories">
-            <SubcategoriesManager />
-          </TabsContent>
-        </Tabs>
-      </ScrollArea>
+      <div className="flex-1 overflow-hidden">
+        <ScrollArea className="h-full container mx-auto p-6">
+          <Tabs defaultValue="articles" className="w-full">
+            <TabsList className="mb-4">
+              <TabsTrigger value="articles" className="text-lg">Articles</TabsTrigger>
+              <TabsTrigger value="categories" className="text-lg">Category Manager</TabsTrigger>
+              <TabsTrigger value="subcategories" className="text-lg">Subcategory Manager</TabsTrigger>
+            </TabsList>
+            <TabsContent value="articles">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold">Articles</h2>
+                <Button className="bg-magazine-red hover:bg-red-600">New Article</Button>
+              </div>
+              <ArticlesManager />
+            </TabsContent>
+            <TabsContent value="categories">
+              <CategoriesManager />
+            </TabsContent>
+            <TabsContent value="subcategories">
+              <SubcategoriesManager />
+            </TabsContent>
+          </Tabs>
+        </ScrollArea>
+      </div>
     </div>
   );
 };
