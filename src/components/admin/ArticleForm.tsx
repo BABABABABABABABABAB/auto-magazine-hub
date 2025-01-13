@@ -135,7 +135,7 @@ export const ArticleForm = () => {
 
           <div>
             <label className="text-sm font-medium">Contenu</label>
-            <div className="min-h-[300px] overflow-y-auto border rounded-md">
+            <div className="min-h-[300px] max-h-[500px] overflow-y-auto border rounded-md">
               <RichTextEditor
                 value={watch("content") || ""}
                 onChange={(value) => setValue("content", value)}

@@ -1,5 +1,5 @@
-import { ArticleForm } from "@/components/admin/ArticleForm";
 import { Button } from "@/components/ui/button";
+import { ArticleForm } from "@/components/admin/ArticleForm";
 import { Link } from "react-router-dom";
 
 const NewArticle = () => {
@@ -8,7 +8,7 @@ const NewArticle = () => {
       <header className="bg-magazine-red text-white p-4 flex justify-between items-center shrink-0">
         <h1 className="text-3xl font-bold">New Article</h1>
         <Button variant="outline" className="text-white border-white hover:bg-red-600" asChild>
-          <Link to="/admin">Back to Dashboard</Link>
+          <Link to="/admin">Back to Admin</Link>
         </Button>
       </header>
 
