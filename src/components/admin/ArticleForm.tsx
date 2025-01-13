@@ -137,11 +137,13 @@ export const ArticleForm = () => {
           <div>
             <label className="text-sm font-medium">Contenu</label>
             <div className="border rounded-md">
-              <ScrollArea className="h-[500px]">
-                <RichTextEditor
-                  value={watch("content") || ""}
-                  onChange={(value) => setValue("content", value)}
-                />
+              <ScrollArea className="h-[500px] w-full">
+                <div className="p-4">
+                  <RichTextEditor
+                    value={watch("content") || ""}
+                    onChange={(value) => setValue("content", value)}
+                  />
+                </div>
               </ScrollArea>
             </div>
           </div>
