@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const NewArticle = () => {
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
+    <div className="min-h-screen flex flex-col">
       <header className="bg-magazine-red text-white p-4 flex justify-between items-center shrink-0">
         <h1 className="text-3xl font-bold">New Article</h1>
         <Button variant="outline" className="text-white border-white hover:bg-red-600" asChild>
@@ -12,8 +12,8 @@ const NewArticle = () => {
         </Button>
       </header>
 
-      <div className="flex-1 overflow-hidden">
-        <div className="h-full container mx-auto p-6 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto p-6">
+        <div className="container mx-auto">
           <ArticleForm />
         </div>
       </div>

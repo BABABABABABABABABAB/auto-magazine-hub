@@ -120,8 +120,8 @@ export const ArticleForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <div className="grid grid-cols-2 gap-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-5xl mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="space-y-4">
           <div>
             <label className="text-sm font-medium">Titre</label>
@@ -135,10 +135,12 @@ export const ArticleForm = () => {
 
           <div>
             <label className="text-sm font-medium">Contenu</label>
-            <RichTextEditor
-              value={watch("content") || ""}
-              onChange={(value) => setValue("content", value)}
-            />
+            <div className="min-h-[300px] overflow-y-auto border rounded-md">
+              <RichTextEditor
+                value={watch("content") || ""}
+                onChange={(value) => setValue("content", value)}
+              />
+            </div>
           </div>
 
           <div>
