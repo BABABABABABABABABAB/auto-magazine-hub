@@ -14,6 +14,7 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { RichTextEditor } from "./RichTextEditor";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ArticleFormData {
   title: string;
@@ -120,7 +121,7 @@ export const ArticleForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-5xl mx-auto">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="space-y-4">
           <div>
@@ -135,11 +136,13 @@ export const ArticleForm = () => {
 
           <div>
             <label className="text-sm font-medium">Contenu</label>
-            <div className="min-h-[300px] max-h-[500px] overflow-y-auto border rounded-md">
-              <RichTextEditor
-                value={watch("content") || ""}
-                onChange={(value) => setValue("content", value)}
-              />
+            <div className="border rounded-md">
+              <ScrollArea className="h-[500px]">
+                <RichTextEditor
+                  value={watch("content") || ""}
+                  onChange={(value) => setValue("content", value)}
+                />
+              </ScrollArea>
             </div>
           </div>
 
