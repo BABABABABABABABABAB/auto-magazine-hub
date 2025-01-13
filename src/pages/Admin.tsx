@@ -9,7 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 const Admin = () => {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col h-screen">
       <header className="bg-magazine-red text-white p-6 flex justify-between items-center">
         <h1 className="text-3xl font-bold">Admin Dashboard</h1>
         <div className="space-x-4">
@@ -22,7 +22,7 @@ const Admin = () => {
         </div>
       </header>
 
-      <ScrollArea className="flex-1 container mx-auto p-6">
+      <ScrollArea className="flex-1 container mx-auto p-6 overflow-y-auto">
         <Tabs defaultValue="articles" className="w-full">
           <TabsList className="mb-4">
             <TabsTrigger value="articles" className="text-lg">Articles</TabsTrigger>
