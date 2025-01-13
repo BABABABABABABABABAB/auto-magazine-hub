@@ -10,25 +10,54 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 
 export const ArticlesManager = () => {
   const [articles, setArticles] = useState([]);
+  const [subcategories, setSubcategories] = useState([]);
   const [newArticle, setNewArticle] = useState({
     title: "",
     content: "",
     featured_image: "",
+    subcategory_id: "",
   });
   const { toast } = useToast();
 
   useEffect(() => {
     fetchArticles();
+    fetchSubcategories();
   }, []);
+
+  const fetchSubcategories = async () => {
+    const { data, error } = await supabase
+      .from("subcategories")
+      .select("*")
+      .order("name", { ascending: true });
+
+    if (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de charger les sous-catégories",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setSubcategories(data);
+  };
 
   const fetchArticles = async () => {
     const { data, error } = await supabase
       .from("articles")
-      .select("*")
+      .select(`*, subcategories(name)`)
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -64,7 +93,7 @@ export const ArticlesManager = () => {
       description: "Article créé avec succès",
     });
 
-    setNewArticle({ title: "", content: "", featured_image: "" });
+    setNewArticle({ title: "", content: "", featured_image: "", subcategory_id: "" });
     fetchArticles();
   };
 
@@ -99,7 +128,7 @@ export const ArticlesManager = () => {
           }
           required
         />
-        <Input
+        <Textarea
           placeholder="Contenu"
           value={newArticle.content}
           onChange={(e) =>
@@ -115,6 +144,23 @@ export const ArticlesManager = () => {
           }
           required
         />
+        <Select
+          value={newArticle.subcategory_id}
+          onValueChange={(value) =>
+            setNewArticle({ ...newArticle, subcategory_id: value })
+          }
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Sélectionner une sous-catégorie" />
+          </SelectTrigger>
+          <SelectContent>
+            {subcategories.map((subcategory) => (
+              <SelectItem key={subcategory.id} value={subcategory.id}>
+                {subcategory.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <Button type="submit">Ajouter un article</Button>
       </form>
 
@@ -122,6 +168,7 @@ export const ArticlesManager = () => {
         <TableHeader>
           <TableRow>
             <TableHead>Titre</TableHead>
+            <TableHead>Sous-catégorie</TableHead>
             <TableHead>Date de création</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
@@ -130,6 +177,7 @@ export const ArticlesManager = () => {
           {articles.map((article) => (
             <TableRow key={article.id}>
               <TableCell>{article.title}</TableCell>
+              <TableCell>{article.subcategories?.name}</TableCell>
               <TableCell>
                 {new Date(article.created_at).toLocaleDateString()}
               </TableCell>
