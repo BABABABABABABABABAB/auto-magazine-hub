@@ -5,10 +5,11 @@ import { CategoriesManager } from "@/components/admin/CategoriesManager";
 import { SubcategoriesManager } from "@/components/admin/SubcategoriesManager";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const Admin = () => {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <header className="bg-magazine-red text-white p-6 flex justify-between items-center">
         <h1 className="text-3xl font-bold">Admin Dashboard</h1>
         <div className="space-x-4">
@@ -21,7 +22,7 @@ const Admin = () => {
         </div>
       </header>
 
-      <main className="container mx-auto p-6">
+      <ScrollArea className="flex-1 container mx-auto p-6">
         <Tabs defaultValue="articles" className="w-full">
           <TabsList className="mb-4">
             <TabsTrigger value="articles" className="text-lg">Articles</TabsTrigger>
@@ -42,7 +43,7 @@ const Admin = () => {
             <SubcategoriesManager />
           </TabsContent>
         </Tabs>
-      </main>
+      </ScrollArea>
     </div>
   );
 };
