@@ -1,57 +1,56 @@
-import { CategoryFilter } from "@/components/CategoryFilter";
-import { ArticleGrid } from "@/components/ArticleGrid";
 import { useState } from "react";
+import { ArticleGrid } from "@/components/ArticleGrid";
+import { CategoryFilter } from "@/components/CategoryFilter";
 
-const MOCK_ARTICLES = [
+// Données temporaires pour la démonstration
+const mockArticles = [
   {
     id: 1,
-    title: "La nouvelle Tesla Model S 2024",
+    title: "La nouvelle BMW M4 Competition",
     imageUrl: "/placeholder.svg",
-    category: "Électrique"
+    category: "Tests",
   },
   {
     id: 2,
-    title: "BMW M4 Competition : Test complet",
+    title: "Le futur de l'électrique",
     imageUrl: "/placeholder.svg",
-    category: "Sport"
+    category: "Innovation",
   },
   {
     id: 3,
-    title: "Guide d'achat : Les meilleurs SUV 2024",
+    title: "Guide d'achat SUV 2024",
     imageUrl: "/placeholder.svg",
-    category: "SUV"
-  }
+    category: "Guides",
+  },
 ];
 
-const CATEGORIES = ["Électrique", "Sport", "SUV", "Luxe", "Familiale"];
+const mockCategories = ["Tests", "Innovation", "Guides", "Sport Auto"];
 
 const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const filteredArticles = selectedCategory
-    ? MOCK_ARTICLES.filter(article => article.category === selectedCategory)
-    : MOCK_ARTICLES;
+    ? mockArticles.filter((article) => article.category === selectedCategory)
+    : mockArticles;
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <header className="text-center mb-12">
-        <h1 className="text-4xl md:text-6xl font-bold text-magazine-black mb-4 font-roboto">
-          Auto Magazine
-        </h1>
-        <p className="text-magazine-gray text-lg md:text-xl mb-8">
-          L'actualité automobile en un clic
-        </p>
+    <div className="min-h-screen bg-white">
+      <header className="bg-magazine-black text-white py-8">
+        <div className="container mx-auto text-center">
+          <h1 className="font-roboto text-4xl font-bold mb-4">Auto Magazine</h1>
+          <p className="text-magazine-gray">
+            L'actualité automobile en temps réel
+          </p>
+        </div>
       </header>
-      
-      <CategoryFilter
-        categories={CATEGORIES}
-        selectedCategory={selectedCategory}
-        onSelectCategory={setSelectedCategory}
-      />
-      
-      <div className="mt-12">
+      <main className="container mx-auto">
+        <CategoryFilter
+          categories={mockCategories}
+          selectedCategory={selectedCategory}
+          onSelectCategory={setSelectedCategory}
+        />
         <ArticleGrid articles={filteredArticles} />
-      </div>
+      </main>
     </div>
   );
 };
