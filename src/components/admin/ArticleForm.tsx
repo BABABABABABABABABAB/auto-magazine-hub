@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { Switch } from "@/components/ui/switch";
+import { RichTextEditor } from "./RichTextEditor";
 
 interface ArticleFormData {
   title: string;
@@ -28,6 +29,7 @@ interface ArticleFormData {
 
 export const ArticleForm = () => {
   const [subcategories, setSubcategories] = useState([]);
+  const [uploading, setUploading] = useState(false);
   const { register, handleSubmit, setValue, watch } = useForm<ArticleFormData>({
     defaultValues: {
       hidden: false,
@@ -56,6 +58,43 @@ export const ArticleForm = () => {
   useEffect(() => {
     fetchSubcategories();
   }, []);
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${crypto.randomUUID()}.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('ui_images')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('ui_images')
+        .getPublicUrl(filePath);
+
+      setValue('featured_image', publicUrl);
+      toast({
+        title: "Succès",
+        description: "Image téléchargée avec succès",
+      });
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Impossible de télécharger l'image",
+        variant: "destructive",
+      });
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const onSubmit = async (data: ArticleFormData) => {
     const { error } = await supabase.from("articles").insert([
@@ -96,12 +135,29 @@ export const ArticleForm = () => {
 
           <div>
             <label className="text-sm font-medium">Contenu</label>
-            <Textarea {...register("content")} rows={10} required />
+            <RichTextEditor
+              value={watch("content") || ""}
+              onChange={(value) => setValue("content", value)}
+            />
           </div>
 
           <div>
-            <label className="text-sm font-medium">Image à la une (URL)</label>
-            <Input {...register("featured_image")} type="url" />
+            <label className="text-sm font-medium">Image à la une</label>
+            <div className="space-y-2">
+              <Input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                disabled={uploading}
+              />
+              {watch("featured_image") && (
+                <img
+                  src={watch("featured_image")}
+                  alt="Preview"
+                  className="w-full h-40 object-cover rounded-md"
+                />
+              )}
+            </div>
           </div>
 
           <div>
