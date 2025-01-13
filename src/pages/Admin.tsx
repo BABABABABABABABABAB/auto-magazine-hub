@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArticlesManager } from "@/components/admin/ArticlesManager";
 import { CategoriesManager } from "@/components/admin/CategoriesManager";
@@ -13,8 +12,8 @@ const Admin = () => {
       <header className="bg-magazine-red text-white p-4 flex justify-between items-center shrink-0">
         <h1 className="text-3xl font-bold">Admin Dashboard</h1>
         <div className="space-x-4">
-          <Button variant="outline" className="text-white border-white hover:bg-red-600">
-            New Article
+          <Button variant="outline" className="text-white border-white hover:bg-red-600" asChild>
+            <Link to="/new-article">New Article</Link>
           </Button>
           <Button variant="outline" className="text-white border-white hover:bg-red-600" asChild>
             <Link to="/">View Site</Link>
@@ -33,7 +32,9 @@ const Admin = () => {
             <TabsContent value="articles">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold">Articles</h2>
-                <Button className="bg-magazine-red hover:bg-red-600">New Article</Button>
+                <Button className="bg-magazine-red hover:bg-red-600" asChild>
+                  <Link to="/new-article">New Article</Link>
+                </Button>
               </div>
               <ArticlesManager />
             </TabsContent>
