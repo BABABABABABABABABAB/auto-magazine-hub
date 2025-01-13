@@ -11,19 +11,19 @@ interface ArticleCardProps {
 export const ArticleCard = ({ id, title, imageUrl, category }: ArticleCardProps) => {
   return (
     <Link to={`/article/${id}`}>
-      <Card className="hover:shadow-lg transition-shadow duration-300">
+      <Card className="transform hover:scale-105 transition-all duration-300 hover:shadow-2xl">
         <CardHeader className="p-0">
           <img
             src={imageUrl}
             alt={title}
-            className="w-full h-48 object-cover rounded-t-lg"
+            className="w-full h-56 object-cover rounded-t-lg"
           />
         </CardHeader>
-        <CardContent className="p-4">
-          <div className="text-magazine-red text-sm font-medium mb-2">
+        <CardContent className="p-6">
+          <span className="inline-block px-3 py-1 text-sm font-semibold text-white bg-magazine-red rounded-full mb-4">
             {category}
-          </div>
-          <h3 className="font-roboto font-bold text-lg text-magazine-black">
+          </span>
+          <h3 className="font-roboto font-bold text-xl text-magazine-black hover:text-magazine-red transition-colors duration-200">
             {title}
           </h3>
         </CardContent>

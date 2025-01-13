@@ -2,7 +2,6 @@ import { useState } from "react";
 import { ArticleGrid } from "@/components/ArticleGrid";
 import { CategoryFilter } from "@/components/CategoryFilter";
 
-// Données temporaires pour la démonstration
 const mockArticles = [
   {
     id: 1,
@@ -34,21 +33,25 @@ const Home = () => {
     : mockArticles;
 
   return (
-    <div className="min-h-screen bg-white">
-      <header className="bg-magazine-black text-white py-8">
-        <div className="container mx-auto text-center">
-          <h1 className="font-roboto text-4xl font-bold mb-4">Auto Magazine</h1>
-          <p className="text-magazine-gray">
+    <div className="min-h-screen bg-gradient-to-b from-white to-gray-100">
+      <header className="bg-gradient-to-r from-magazine-black to-gray-900 text-white py-12 shadow-xl">
+        <div className="container mx-auto text-center px-4">
+          <h1 className="font-roboto text-5xl font-bold mb-4 tracking-tight">
+            Auto Magazine
+          </h1>
+          <p className="text-gray-300 text-xl font-light">
             L'actualité automobile en temps réel
           </p>
         </div>
       </header>
-      <main className="container mx-auto">
-        <CategoryFilter
-          categories={mockCategories}
-          selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
-        />
+      <main className="container mx-auto px-4 py-8">
+        <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
+          <CategoryFilter
+            categories={mockCategories}
+            selectedCategory={selectedCategory}
+            onSelectCategory={setSelectedCategory}
+          />
+        </div>
         <ArticleGrid articles={filteredArticles} />
       </main>
     </div>
