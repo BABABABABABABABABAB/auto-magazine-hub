@@ -1,7 +1,7 @@
 import { ArticleCard } from "./ArticleCard";
 
 interface Article {
-  id: number;
+  id: string;  // Changed from number to string for UUID
   title: string;
   imageUrl: string;
   category: string;

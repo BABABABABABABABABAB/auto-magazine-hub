@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 
 interface ArticleCardProps {
-  id: number;
+  id: string;  // Changed from number to string for UUID
   title: string;
   imageUrl: string;
   category: string;

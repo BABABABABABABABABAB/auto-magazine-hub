@@ -1,37 +1,82 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ArticleGrid } from "@/components/ArticleGrid";
 import { CategoryFilter } from "@/components/CategoryFilter";
-
-// Données temporaires pour la démonstration
-const mockArticles = [
-  {
-    id: 1,
-    title: "La nouvelle BMW M4 Competition",
-    imageUrl: "/placeholder.svg",
-    category: "Tests",
-  },
-  {
-    id: 2,
-    title: "Le futur de l'électrique",
-    imageUrl: "/placeholder.svg",
-    category: "Innovation",
-  },
-  {
-    id: 3,
-    title: "Guide d'achat SUV 2024",
-    imageUrl: "/placeholder.svg",
-    category: "Guides",
-  },
-];
-
-const mockCategories = ["Tests", "Innovation", "Guides", "Sport Auto"];
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [articles, setArticles] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const { toast } = useToast();
 
-  const filteredArticles = selectedCategory
-    ? mockArticles.filter((article) => article.category === selectedCategory)
-    : mockArticles;
+  // Charger les catégories
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const { data, error } = await supabase
+        .from("categories")
+        .select("name")
+        .order("name");
+
+      if (error) {
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger les catégories",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setCategories(data.map(cat => cat.name));
+    };
+
+    fetchCategories();
+  }, [toast]);
+
+  // Charger les articles
+  useEffect(() => {
+    const fetchArticles = async () => {
+      let query = supabase
+        .from("articles")
+        .select(`
+          id,
+          title,
+          featured_image,
+          subcategories(
+            name,
+            categories(name)
+          )
+        `)
+        .eq("hidden", false)
+        .order("created_at", { ascending: false });
+
+      if (selectedCategory) {
+        query = query.eq("subcategories.categories.name", selectedCategory);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger les articles",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const formattedArticles = data.map(article => ({
+        id: article.id,
+        title: article.title,
+        imageUrl: article.featured_image || "/placeholder.svg",
+        category: article.subcategories?.categories?.name || "Non catégorisé"
+      }));
+
+      setArticles(formattedArticles);
+    };
+
+    fetchArticles();
+  }, [selectedCategory, toast]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -45,11 +90,11 @@ const Home = () => {
       </header>
       <main className="container mx-auto">
         <CategoryFilter
-          categories={mockCategories}
+          categories={categories}
           selectedCategory={selectedCategory}
           onSelectCategory={setSelectedCategory}
         />
-        <ArticleGrid articles={filteredArticles} />
+        <ArticleGrid articles={articles} />
       </main>
     </div>
   );
