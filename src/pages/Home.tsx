@@ -3,12 +3,43 @@ import { ArticleGrid } from "@/components/ArticleGrid";
 import { CategoryFilter } from "@/components/CategoryFilter";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { NavigationMenu } from "@/components/ui/navigation-menu";
 
 const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [articles, setArticles] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [bannerSettings, setBannerSettings] = useState({
+    background_url: '',
+    background_type: 'image'
+  });
   const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchBannerSettings = async () => {
+      const { data, error } = await supabase
+        .from('home_settings')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (error) {
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger les paramètres de la bannière",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (data) {
+        setBannerSettings(data);
+      }
+    };
+
+    fetchBannerSettings();
+  }, [toast]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -80,20 +111,38 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="bg-magazine-black text-white py-8">
-        <div className="container mx-auto text-center">
-          <h1 className="font-roboto text-4xl font-bold mb-4">Auto Magazine</h1>
-          <p className="text-magazine-gray">
-            L'actualité automobile en temps réel
-          </p>
+      {/* Logo Bar */}
+      <div className="bg-magazine-red py-4">
+        <div className="container mx-auto">
+          <h1 className="text-4xl font-serif text-white text-center">
+            L'Automobile Magazine
+          </h1>
         </div>
-      </header>
-      <main className="container mx-auto">
-        <CategoryFilter
-          categories={categories}
-          selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
+      </div>
+
+      {/* Categories Bar */}
+      <nav className="bg-magazine-black text-white py-2 sticky top-0 z-50">
+        <div className="container mx-auto">
+          <CategoryFilter
+            categories={categories}
+            selectedCategory={selectedCategory}
+            onSelectCategory={setSelectedCategory}
+          />
+        </div>
+      </nav>
+
+      {/* Banner */}
+      {bannerSettings.background_url && (
+        <div 
+          className="w-full h-[300px] bg-cover bg-center"
+          style={{
+            backgroundImage: `url(${bannerSettings.background_url})`
+          }}
         />
+      )}
+
+      {/* Articles Grid */}
+      <main className="container mx-auto">
         <ArticleGrid articles={articles} />
       </main>
     </div>

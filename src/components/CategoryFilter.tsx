@@ -12,11 +12,11 @@ export const CategoryFilter = ({
   onSelectCategory,
 }: CategoryFilterProps) => {
   return (
-    <div className="flex flex-wrap gap-2 p-4">
+    <div className="flex flex-wrap gap-2 justify-center items-center">
       <Button
         variant={selectedCategory === null ? "default" : "outline"}
         onClick={() => onSelectCategory(null)}
-        className="font-roboto"
+        className="text-white hover:text-magazine-red hover:bg-white transition-colors"
       >
         Tous
       </Button>
@@ -25,7 +25,7 @@ export const CategoryFilter = ({
           key={category}
           variant={selectedCategory === category ? "default" : "outline"}
           onClick={() => onSelectCategory(category)}
-          className="font-roboto"
+          className="text-white hover:text-magazine-red hover:bg-white transition-colors"
         >
           {category}
         </Button>
