@@ -10,13 +10,18 @@ import { PublishSection } from "./article-form/PublishSection";
 import { ArticleFormData } from "./article-form/types";
 import { useNavigate } from "react-router-dom";
 
-export const ArticleForm = () => {
+interface ArticleFormProps {
+  initialData?: ArticleFormData;
+}
+
+export const ArticleForm = ({ initialData }: ArticleFormProps) => {
   const [subcategories, setSubcategories] = useState([]);
   const [uploading, setUploading] = useState(false);
   const { register, handleSubmit, setValue, watch } = useForm<ArticleFormData>({
     defaultValues: {
       hidden: false,
       status: "draft",
+      ...initialData,
     },
   });
   const { toast } = useToast();
@@ -82,12 +87,14 @@ export const ArticleForm = () => {
   };
 
   const onSubmit = async (data: ArticleFormData) => {
-    const { error } = await supabase.from("articles").insert([data]);
+    const { error } = initialData 
+      ? await supabase.from("articles").update(data).eq('id', initialData.id)
+      : await supabase.from("articles").insert([data]);
 
     if (error) {
       toast({
         title: "Erreur",
-        description: "Impossible de créer l'article",
+        description: initialData ? "Impossible de modifier l'article" : "Impossible de créer l'article",
         variant: "destructive",
       });
       return;
@@ -95,7 +102,7 @@ export const ArticleForm = () => {
 
     toast({
       title: "Succès",
-      description: "Article créé avec succès",
+      description: initialData ? "Article modifié avec succès" : "Article créé avec succès",
     });
     
     navigate("/admin");
@@ -123,7 +130,7 @@ export const ArticleForm = () => {
 
       <div className="flex justify-end pt-4 border-t">
         <Button type="submit" className="bg-magazine-red hover:bg-red-600">
-          Enregistrer l'article
+          {initialData ? "Modifier l'article" : "Enregistrer l'article"}
         </Button>
       </div>
     </form>
