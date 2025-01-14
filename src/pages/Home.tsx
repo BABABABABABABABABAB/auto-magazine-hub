@@ -10,7 +10,6 @@ const Home = () => {
   const [categories, setCategories] = useState([]);
   const { toast } = useToast();
 
-  // Charger les catégories
   useEffect(() => {
     const fetchCategories = async () => {
       const { data, error } = await supabase
@@ -33,7 +32,6 @@ const Home = () => {
     fetchCategories();
   }, [toast]);
 
-  // Charger les articles
   useEffect(() => {
     const fetchArticles = async () => {
       let query = supabase
@@ -42,9 +40,11 @@ const Home = () => {
           id,
           title,
           featured_image,
-          subcategories(
+          subcategories!inner (
             name,
-            categories(name)
+            categories!inner (
+              name
+            )
           )
         `)
         .eq("hidden", false)
