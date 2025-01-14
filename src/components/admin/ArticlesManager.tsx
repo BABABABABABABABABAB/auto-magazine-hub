@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/use-toast";
 import { ArticleForm } from "./ArticleForm";
+import { useNavigate } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
@@ -23,6 +24,7 @@ import {
 export const ArticlesManager = () => {
   const [articles, setArticles] = useState([]);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchArticles();
@@ -64,6 +66,10 @@ export const ArticlesManager = () => {
     });
 
     fetchArticles();
+  };
+
+  const handleEdit = (id) => {
+    navigate(`/admin/articles/${id}/edit`);
   };
 
   const toggleHidden = async (id, currentValue) => {
@@ -129,7 +135,11 @@ export const ArticlesManager = () => {
                 />
               </TableCell>
               <TableCell className="space-x-2">
-                <Button variant="outline" size="sm">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => handleEdit(article.id)}
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
