@@ -20,10 +20,9 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/article/:id" element={<Article />} />
-          <Route path="/admin" element={<Admin />}>
-            <Route path="nouvel-article" element={<NewArticle />} />
-            <Route path="articles/:id/edit" element={<EditArticle />} />
-          </Route>
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/admin/nouvel-article" element={<NewArticle />} />
+          <Route path="/admin/articles/:id/edit" element={<EditArticle />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
