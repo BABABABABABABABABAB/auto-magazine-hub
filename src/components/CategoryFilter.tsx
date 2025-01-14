@@ -33,7 +33,6 @@ export const CategoryFilter = ({
         return;
       }
 
-      // Group subcategories by category
       const grouped = data.reduce((acc: Record<string, any[]>, curr) => {
         const categoryName = curr.categories?.name;
         if (categoryName) {
@@ -52,13 +51,13 @@ export const CategoryFilter = ({
   }, []);
 
   return (
-    <NavigationMenu className="max-w-full w-full justify-center">
-      <NavigationMenuList className="gap-2">
+    <NavigationMenu className="max-w-full w-full justify-start md:justify-center overflow-x-auto">
+      <NavigationMenuList className="gap-1 md:gap-2 px-2 md:px-0 flex-nowrap">
         <NavigationMenuItem>
           <Button
             variant={selectedCategory === null ? "default" : "outline"}
             onClick={() => onSelectCategory(null)}
-            className="bg-white text-magazine-black hover:bg-magazine-red hover:text-white transition-colors font-semibold"
+            className="bg-white text-magazine-black hover:bg-magazine-red hover:text-white transition-colors font-semibold text-sm md:text-base whitespace-nowrap"
           >
             Tous
           </Button>
@@ -70,21 +69,20 @@ export const CategoryFilter = ({
                 selectedCategory === category
                   ? "bg-magazine-red text-white"
                   : "bg-white text-magazine-black"
-              } hover:bg-magazine-red hover:text-white transition-colors font-semibold`}
+              } hover:bg-magazine-red hover:text-white transition-colors font-semibold text-sm md:text-base whitespace-nowrap`}
               onClick={() => onSelectCategory(category)}
             >
               {category}
             </NavigationMenuTrigger>
             {subcategories[category] && subcategories[category].length > 0 && (
               <NavigationMenuContent>
-                <div className="p-2 bg-white rounded-md shadow-lg min-w-[200px] border border-gray-100">
+                <div className="p-2 bg-white rounded-md shadow-lg w-[200px] md:min-w-[200px] border border-gray-100">
                   {subcategories[category].map((subcategory) => (
                     <Button
                       key={subcategory.id}
                       variant="ghost"
-                      className="w-full justify-start px-4 py-2 text-sm text-gray-700 hover:bg-magazine-red hover:text-white transition-colors"
+                      className="w-full justify-start px-4 py-2 text-xs md:text-sm text-gray-700 hover:bg-magazine-red hover:text-white transition-colors"
                       onClick={() => {
-                        // You can handle subcategory selection here
                         console.log("Selected subcategory:", subcategory.name);
                       }}
                     >
