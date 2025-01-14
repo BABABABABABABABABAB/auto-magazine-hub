@@ -13,6 +13,11 @@ export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
     },
+    editorProps: {
+      attributes: {
+        class: 'prose max-w-none min-h-[500px] p-4 focus:outline-none',
+      },
+    },
   });
 
   if (!editor) {
@@ -63,7 +68,7 @@ export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
           }`}
           title="Titre H1"
         >
-          H1
+          <span className="font-bold text-lg">H1</span>
         </button>
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
@@ -72,7 +77,7 @@ export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
           }`}
           title="Titre H2"
         >
-          H2
+          <span className="font-semibold text-base">H2</span>
         </button>
         <button
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
@@ -81,7 +86,7 @@ export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
           }`}
           title="Titre H3"
         >
-          H3
+          <span className="font-medium text-sm">H3</span>
         </button>
         <div className="w-px h-6 bg-gray-200 mx-2" />
         <button
@@ -118,10 +123,7 @@ export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
   return (
     <div className="relative border rounded-lg overflow-hidden">
       <MenuBar />
-      <EditorContent 
-        editor={editor} 
-        className="prose max-w-none min-h-[500px] p-4"
-      />
+      <EditorContent editor={editor} />
     </div>
   );
 };
