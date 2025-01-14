@@ -93,19 +93,12 @@ export const ArticlesManager = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-end">
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button className="bg-magazine-red hover:bg-red-600">
-              Nouvel Article
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-4xl">
-            <DialogHeader>
-              <DialogTitle>Créer un nouvel article</DialogTitle>
-            </DialogHeader>
-            <ArticleForm />
-          </DialogContent>
-        </Dialog>
+        <Button 
+          className="bg-magazine-red hover:bg-red-600"
+          onClick={() => navigate("/admin/nouvel-article")}
+        >
+          Nouvel Article
+        </Button>
       </div>
 
       <Table>
