@@ -77,7 +77,7 @@ export const CategoryFilter = ({
             </NavigationMenuTrigger>
             {subcategories[category] && subcategories[category].length > 0 && (
               <NavigationMenuContent>
-                <div className="absolute top-full left-0 w-[200px] rounded-md shadow-lg bg-white border border-gray-100 mt-1 py-2">
+                <div className="p-2 bg-white rounded-md shadow-lg min-w-[200px] border border-gray-100">
                   {subcategories[category].map((subcategory) => (
                     <Button
                       key={subcategory.id}
