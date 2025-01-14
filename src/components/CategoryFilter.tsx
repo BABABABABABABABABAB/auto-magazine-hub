@@ -1,14 +1,8 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { supabase } from "@/integrations/supabase/client";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Menu, X } from "lucide-react";
 
 interface CategoryFilterProps {
   categories: string[];
@@ -23,6 +17,7 @@ export const CategoryFilter = ({
 }: CategoryFilterProps) => {
   const [subcategories, setSubcategories] = useState<Record<string, any[]>>({});
   const [isOpen, setIsOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const fetchSubcategories = async () => {
@@ -52,32 +47,28 @@ export const CategoryFilter = ({
     fetchSubcategories();
   }, []);
 
+  const allCategories = ["Tout", ...categories];
+
   return (
     <div className="relative">
-      {/* Barre de navigation principale */}
-      <nav className="bg-magazine-black text-white py-2 px-4 flex items-center justify-between md:justify-start gap-4">
-        <Button
-          variant="ghost"
-          onClick={() => setIsOpen(!isOpen)}
-          className="text-white hover:text-magazine-red md:hidden"
-        >
-          Menu
-        </Button>
-        
-        <NavigationMenu className="hidden md:flex">
-          <NavigationMenuList className="gap-6">
-            {categories.map((category) => (
-              <NavigationMenuItem key={category} className="relative group">
+      {/* Desktop Navigation */}
+      <nav className="hidden md:block bg-magazine-black text-white">
+        <div className="container mx-auto px-4">
+          <ul className="flex items-center space-x-6 h-12">
+            {allCategories.map((category) => (
+              <li key={category} className="relative group">
                 <button
-                  onClick={() => onSelectCategory(category)}
+                  onClick={() => onSelectCategory(category === "Tout" ? null : category)}
                   className={`text-sm font-medium hover:text-magazine-red transition-colors ${
-                    selectedCategory === category ? "text-magazine-red" : "text-white"
+                    (category === "Tout" && !selectedCategory) || selectedCategory === category
+                      ? "text-magazine-red"
+                      : "text-white"
                   }`}
                 >
                   {category}
                 </button>
                 
-                {subcategories[category] && subcategories[category].length > 0 && (
+                {category !== "Tout" && subcategories[category]?.length > 0 && (
                   <div className="absolute left-0 top-full pt-2 hidden group-hover:block z-50">
                     <div className="bg-white rounded-md shadow-lg min-w-[200px] py-2">
                       {subcategories[category].map((subcategory) => (
@@ -94,69 +85,84 @@ export const CategoryFilter = ({
                     </div>
                   </div>
                 )}
-              </NavigationMenuItem>
+              </li>
             ))}
-          </NavigationMenuList>
-        </NavigationMenu>
+          </ul>
+        </div>
       </nav>
 
-      {/* Menu mobile */}
-      {isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 md:hidden">
-          <div className="bg-white h-full w-64 p-4 overflow-y-auto">
-            <div className="flex justify-between items-center mb-4">
+      {/* Mobile Navigation */}
+      <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+        <SheetTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden fixed top-4 left-4 z-50 bg-magazine-black text-white hover:bg-magazine-red"
+          >
+            <Menu className="h-6 w-6" />
+          </Button>
+        </SheetTrigger>
+        <SheetContent
+          side="left"
+          className="w-[280px] bg-white p-0"
+        >
+          <div className="flex flex-col h-full">
+            <div className="flex items-center justify-between p-4 border-b">
               <h2 className="font-bold text-lg">Catégories</h2>
               <Button
                 variant="ghost"
-                onClick={() => setIsOpen(false)}
-                className="hover:text-magazine-red"
+                size="icon"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="hover:bg-magazine-red hover:text-white rounded-full"
               >
-                ✕
+                <X className="h-5 w-5" />
               </Button>
             </div>
             
-            <div className="space-y-2">
-              {categories.map((category) => (
-                <div key={category} className="space-y-1">
-                  <button
-                    onClick={() => {
-                      onSelectCategory(category);
-                      setIsOpen(false);
-                    }}
-                    className={`w-full text-left px-2 py-1.5 rounded flex items-center justify-between ${
-                      selectedCategory === category
-                        ? "text-magazine-red"
-                        : "text-gray-800"
-                    }`}
-                  >
-                    <span>{category}</span>
-                    {subcategories[category]?.length > 0 && (
-                      <ChevronRight className="h-4 w-4" />
+            <div className="flex-1 overflow-y-auto">
+              <div className="py-2">
+                {allCategories.map((category) => (
+                  <div key={category} className="space-y-1">
+                    <button
+                      onClick={() => {
+                        onSelectCategory(category === "Tout" ? null : category);
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className={`w-full text-left px-4 py-3 flex items-center justify-between ${
+                        (category === "Tout" && !selectedCategory) || selectedCategory === category
+                          ? "text-magazine-red"
+                          : "text-gray-800"
+                      } hover:bg-gray-100`}
+                    >
+                      <span className="font-medium">{category}</span>
+                      {category !== "Tout" && subcategories[category]?.length > 0 && (
+                        <ChevronRight className="h-4 w-4" />
+                      )}
+                    </button>
+                    
+                    {category !== "Tout" && subcategories[category] && (
+                      <div className="pl-4 space-y-1 bg-gray-50">
+                        {subcategories[category].map((subcategory) => (
+                          <button
+                            key={subcategory.id}
+                            onClick={() => {
+                              console.log("Selected subcategory:", subcategory.name);
+                              setIsMobileMenuOpen(false);
+                            }}
+                            className="w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-magazine-red"
+                          >
+                            {subcategory.name}
+                          </button>
+                        ))}
+                      </div>
                     )}
-                  </button>
-                  
-                  {subcategories[category] && (
-                    <div className="pl-4 space-y-1">
-                      {subcategories[category].map((subcategory) => (
-                        <button
-                          key={subcategory.id}
-                          onClick={() => {
-                            console.log("Selected subcategory:", subcategory.name);
-                            setIsOpen(false);
-                          }}
-                          className="w-full text-left px-2 py-1 text-sm text-gray-600 hover:text-magazine-red"
-                        >
-                          {subcategory.name}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };
