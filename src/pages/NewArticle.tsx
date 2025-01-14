@@ -13,7 +13,7 @@ const NewArticle = () => {
       </header>
 
       <main className="flex-1 container mx-auto py-6 px-4">
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="bg-white rounded-lg shadow-sm border p-6">
           <ArticleForm />
         </div>
       </main>
