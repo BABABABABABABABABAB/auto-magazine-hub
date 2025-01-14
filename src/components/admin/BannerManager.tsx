@@ -4,16 +4,31 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Label } from "@/components/ui/label";
+import { useNavigate } from "react-router-dom";
 
 export const BannerManager = () => {
   const [imageUrl, setImageUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
+    checkAuth();
     fetchCurrentBanner();
   }, []);
+
+  const checkAuth = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      toast({
+        title: "Non autorisé",
+        description: "Vous devez être connecté pour accéder à cette page",
+        variant: "destructive",
+      });
+      navigate("/login");
+    }
+  };
 
   const fetchCurrentBanner = async () => {
     const { data, error } = await supabase
@@ -68,6 +83,11 @@ export const BannerManager = () => {
     setLoading(true);
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error("Non autorisé");
+      }
+
       let finalImageUrl = imageUrl;
 
       if (file) {
