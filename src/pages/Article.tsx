@@ -4,12 +4,21 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 
 const Article = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const { toast } = useToast();
 
   const { data: article, isLoading } = useQuery({
     queryKey: ["article", id],
     queryFn: async () => {
+      if (!id) {
+        toast({
+          title: "Erreur",
+          description: "ID d'article manquant",
+          variant: "destructive",
+        });
+        throw new Error("ID d'article manquant");
+      }
+
       const { data, error } = await supabase
         .from("articles")
         .select(`
@@ -22,7 +31,7 @@ const Article = () => {
           )
         `)
         .eq("id", id)
-        .single();
+        .maybeSingle();
 
       if (error) {
         toast({
@@ -35,6 +44,7 @@ const Article = () => {
 
       return data;
     },
+    enabled: !!id,
   });
 
   if (isLoading) {
