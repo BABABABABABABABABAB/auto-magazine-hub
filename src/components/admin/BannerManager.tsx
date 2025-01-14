@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { Label } from "@/components/ui/label";
+import { ImageUploadForm } from "./banner/ImageUploadForm";
+import { ImageUrlInput } from "./banner/ImageUrlInput";
+import { ImagePreview } from "./banner/ImagePreview";
 
 export const BannerManager = () => {
   const [imageUrl, setImageUrl] = useState("");
@@ -111,44 +112,17 @@ export const BannerManager = () => {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="file">Importer une image</Label>
-            <Input
-              id="file"
-              type="file"
-              onChange={handleFileChange}
-              accept="image/*"
-              className="cursor-pointer"
-            />
-          </div>
-
-          <div className="- divider">ou</div>
-
-          <div className="space-y-2">
-            <Label htmlFor="imageUrl">URL de l'image</Label>
-            <Input
-              id="imageUrl"
-              type="url"
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-              placeholder="https://example.com/image.jpg"
-            />
-          </div>
+          <ImageUploadForm onFileChange={handleFileChange} />
+          
+          <div className="divider">ou</div>
+          
+          <ImageUrlInput 
+            imageUrl={imageUrl}
+            onUrlChange={(e) => setImageUrl(e.target.value)}
+          />
         </div>
 
-        {(imageUrl || file) && (
-          <div className="mt-4">
-            <h3 className="text-sm font-medium mb-2">Aperçu</h3>
-            <div 
-              className="w-full h-[200px] bg-cover bg-center rounded-lg border"
-              style={{ 
-                backgroundImage: file 
-                  ? `url(${URL.createObjectURL(file)})` 
-                  : `url(${imageUrl})`
-              }}
-            />
-          </div>
-        )}
+        <ImagePreview imageUrl={imageUrl} file={file} />
 
         <Button type="submit" disabled={loading}>
           {loading ? "Mise à jour..." : "Mettre à jour la bannière"}
