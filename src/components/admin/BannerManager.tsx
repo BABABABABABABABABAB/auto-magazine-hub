@@ -3,10 +3,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { Label } from "@/components/ui/label";
 
 export const BannerManager = () => {
   const [imageUrl, setImageUrl] = useState("");
   const [loading, setLoading] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -35,33 +37,70 @@ export const BannerManager = () => {
     }
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setFile(e.target.files[0]);
+    }
+  };
+
+  const uploadImage = async (file: File) => {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Math.random()}.${fileExt}`;
+    const filePath = `banners/${fileName}`;
+
+    const { error: uploadError, data } = await supabase.storage
+      .from('ui_images')
+      .upload(filePath, file);
+
+    if (uploadError) {
+      throw new Error('Erreur lors du téléchargement de l\'image');
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('ui_images')
+      .getPublicUrl(filePath);
+
+    return publicUrl;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
-    const { error } = await supabase
-      .from('home_settings')
-      .insert([
-        {
-          background_url: imageUrl,
-          background_type: 'image'
-        }
-      ]);
+    try {
+      let finalImageUrl = imageUrl;
 
-    if (error) {
+      if (file) {
+        finalImageUrl = await uploadImage(file);
+      }
+
+      const { error } = await supabase
+        .from('home_settings')
+        .insert([
+          {
+            background_url: finalImageUrl,
+            background_type: 'image'
+          }
+        ]);
+
+      if (error) throw error;
+
+      toast({
+        title: "Succès",
+        description: "La bannière a été mise à jour",
+      });
+
+      setImageUrl(finalImageUrl);
+      setFile(null);
+    } catch (error) {
       toast({
         title: "Erreur",
         description: "Impossible de mettre à jour la bannière",
         variant: "destructive",
       });
-    } else {
-      toast({
-        title: "Succès",
-        description: "La bannière a été mise à jour",
-      });
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
@@ -71,26 +110,42 @@ export const BannerManager = () => {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <label htmlFor="imageUrl" className="text-sm font-medium">
-            URL de l'image
-          </label>
-          <Input
-            id="imageUrl"
-            type="url"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-            placeholder="https://example.com/image.jpg"
-            required
-          />
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="file">Importer une image</Label>
+            <Input
+              id="file"
+              type="file"
+              onChange={handleFileChange}
+              accept="image/*"
+              className="cursor-pointer"
+            />
+          </div>
+
+          <div className="- divider">ou</div>
+
+          <div className="space-y-2">
+            <Label htmlFor="imageUrl">URL de l'image</Label>
+            <Input
+              id="imageUrl"
+              type="url"
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
+              placeholder="https://example.com/image.jpg"
+            />
+          </div>
         </div>
 
-        {imageUrl && (
+        {(imageUrl || file) && (
           <div className="mt-4">
             <h3 className="text-sm font-medium mb-2">Aperçu</h3>
             <div 
               className="w-full h-[200px] bg-cover bg-center rounded-lg border"
-              style={{ backgroundImage: `url(${imageUrl})` }}
+              style={{ 
+                backgroundImage: file 
+                  ? `url(${URL.createObjectURL(file)})` 
+                  : `url(${imageUrl})`
+              }}
             />
           </div>
         )}
