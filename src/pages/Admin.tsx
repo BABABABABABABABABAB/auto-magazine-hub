@@ -2,6 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArticlesManager } from "@/components/admin/ArticlesManager";
 import { CategoriesManager } from "@/components/admin/CategoriesManager";
 import { SubcategoriesManager } from "@/components/admin/SubcategoriesManager";
+import { BannerManager } from "@/components/admin/BannerManager";
 import { Button } from "@/components/ui/button";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -35,6 +36,7 @@ const Admin = () => {
                   <TabsTrigger value="articles" className="text-lg">Articles</TabsTrigger>
                   <TabsTrigger value="categories" className="text-lg">Catégories</TabsTrigger>
                   <TabsTrigger value="subcategories" className="text-lg">Sous-catégories</TabsTrigger>
+                  <TabsTrigger value="banner" className="text-lg">Bannière</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="articles" className="mt-6">
@@ -53,6 +55,10 @@ const Admin = () => {
                 
                 <TabsContent value="subcategories" className="mt-6">
                   <SubcategoriesManager />
+                </TabsContent>
+
+                <TabsContent value="banner" className="mt-6">
+                  <BannerManager />
                 </TabsContent>
               </Tabs>
             </div>
