@@ -1,3 +1,5 @@
+import { UseFormSetValue } from "react-hook-form";
+import { ArticleFormData } from "./types";
 import {
   Select,
   SelectContent,
@@ -5,8 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { UseFormSetValue } from "react-hook-form";
-import { ArticleFormData } from "./types";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface CategorySectionProps {
   setValue: UseFormSetValue<ArticleFormData>;
@@ -15,23 +16,27 @@ interface CategorySectionProps {
 
 export const CategorySection = ({ setValue, subcategories }: CategorySectionProps) => {
   return (
-    <div>
-      <label className="text-sm font-medium">Sous-catégorie</label>
-      <Select
-        onValueChange={(value) => setValue("subcategory_id", value)}
-        required
-      >
-        <SelectTrigger>
-          <SelectValue placeholder="Sélectionner une sous-catégorie" />
-        </SelectTrigger>
-        <SelectContent>
-          {subcategories.map((subcat) => (
-            <SelectItem key={subcat.id} value={subcat.id}>
-              {subcat.name} ({subcat.categories?.name})
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Catégorie</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Select
+          onValueChange={(value) => setValue("subcategory_id", value)}
+          required
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Sélectionner une sous-catégorie" />
+          </SelectTrigger>
+          <SelectContent>
+            {subcategories.map((subcat) => (
+              <SelectItem key={subcat.id} value={subcat.id}>
+                {subcat.name} ({subcat.categories?.name})
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </CardContent>
+    </Card>
   );
 };

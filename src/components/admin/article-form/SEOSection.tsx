@@ -1,7 +1,9 @@
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { UseFormRegister } from "react-hook-form";
 import { ArticleFormData } from "./types";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface SEOSectionProps {
   register: UseFormRegister<ArticleFormData>;
@@ -9,31 +11,36 @@ interface SEOSectionProps {
 
 export const SEOSection = ({ register }: SEOSectionProps) => {
   return (
-    <div className="p-4 bg-gray-50 rounded-lg">
-      <h3 className="font-medium mb-4">Options SEO</h3>
-      
-      <div className="space-y-4">
-        <div>
-          <label className="text-sm font-medium">Slug</label>
-          <Input {...register("slug")} required />
+    <Card>
+      <CardHeader>
+        <CardTitle>SEO</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="slug">Slug</Label>
+          <Input id="slug" {...register("slug")} required />
         </div>
 
-        <div>
-          <label className="text-sm font-medium">Meta Title</label>
-          <Input {...register("meta_title")} />
-          <p className="text-sm text-gray-500 mt-1">
+        <div className="space-y-2">
+          <Label htmlFor="meta_title">Meta Title</Label>
+          <Input id="meta_title" {...register("meta_title")} />
+          <p className="text-sm text-gray-500">
             Recommandé: 50-60 caractères
           </p>
         </div>
 
-        <div>
-          <label className="text-sm font-medium">Meta Description</label>
-          <Textarea {...register("meta_description")} rows={3} />
-          <p className="text-sm text-gray-500 mt-1">
+        <div className="space-y-2">
+          <Label htmlFor="meta_description">Meta Description</Label>
+          <Textarea
+            id="meta_description"
+            {...register("meta_description")}
+            rows={3}
+          />
+          <p className="text-sm text-gray-500">
             Recommandé: 150-160 caractères
           </p>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };

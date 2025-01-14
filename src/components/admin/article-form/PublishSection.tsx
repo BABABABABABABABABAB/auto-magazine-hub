@@ -1,6 +1,8 @@
 import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { UseFormWatch, UseFormSetValue } from "react-hook-form";
 import { ArticleFormData } from "./types";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface PublishSectionProps {
   watch: UseFormWatch<ArticleFormData>;
@@ -9,16 +11,20 @@ interface PublishSectionProps {
 
 export const PublishSection = ({ watch, setValue }: PublishSectionProps) => {
   return (
-    <div className="p-4 bg-gray-50 rounded-lg">
-      <h3 className="font-medium mb-4">Options de publication</h3>
-      
-      <div className="flex items-center space-x-2">
-        <Switch
-          checked={watch("hidden")}
-          onCheckedChange={(checked) => setValue("hidden", checked)}
-        />
-        <label className="text-sm font-medium">Masquer l'article</label>
-      </div>
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>Publication</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="flex items-center space-x-2">
+          <Switch
+            id="hidden"
+            checked={watch("hidden")}
+            onCheckedChange={(checked) => setValue("hidden", checked)}
+          />
+          <Label htmlFor="hidden">Masquer l'article</Label>
+        </div>
+      </CardContent>
+    </Card>
   );
 };

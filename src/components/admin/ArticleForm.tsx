@@ -8,6 +8,7 @@ import { CategorySection } from "./article-form/CategorySection";
 import { SEOSection } from "./article-form/SEOSection";
 import { PublishSection } from "./article-form/PublishSection";
 import { ArticleFormData } from "./article-form/types";
+import { useNavigate } from "react-router-dom";
 
 export const ArticleForm = () => {
   const [subcategories, setSubcategories] = useState([]);
@@ -15,9 +16,11 @@ export const ArticleForm = () => {
   const { register, handleSubmit, setValue, watch } = useForm<ArticleFormData>({
     defaultValues: {
       hidden: false,
+      status: "draft",
     },
   });
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const fetchSubcategories = async () => {
     const { data, error } = await supabase
@@ -79,12 +82,7 @@ export const ArticleForm = () => {
   };
 
   const onSubmit = async (data: ArticleFormData) => {
-    const { error } = await supabase.from("articles").insert([
-      {
-        ...data,
-        status: "draft",
-      },
-    ]);
+    const { error } = await supabase.from("articles").insert([data]);
 
     if (error) {
       toast({
@@ -99,12 +97,14 @@ export const ArticleForm = () => {
       title: "Succès",
       description: "Article créé avec succès",
     });
+    
+    navigate("/admin");
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-8">
           <ContentSection
             register={register}
             watch={watch}
@@ -112,16 +112,16 @@ export const ArticleForm = () => {
             handleImageUpload={handleImageUpload}
             uploading={uploading}
           />
-          <CategorySection setValue={setValue} subcategories={subcategories} />
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-8">
+          <CategorySection setValue={setValue} subcategories={subcategories} />
           <SEOSection register={register} />
           <PublishSection watch={watch} setValue={setValue} />
         </div>
       </div>
 
-      <div className="flex justify-end">
+      <div className="flex justify-end pt-4 border-t">
         <Button type="submit" className="bg-magazine-red hover:bg-red-600">
           Enregistrer l'article
         </Button>
