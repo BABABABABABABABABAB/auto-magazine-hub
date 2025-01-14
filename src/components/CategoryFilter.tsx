@@ -77,22 +77,21 @@ export const CategoryFilter = ({
             </NavigationMenuTrigger>
             {subcategories[category] && subcategories[category].length > 0 && (
               <NavigationMenuContent>
-                <ul className="grid w-[200px] gap-2 p-4 bg-white">
+                <div className="absolute top-full left-0 w-[200px] rounded-md shadow-lg bg-white border border-gray-100 mt-1 py-2">
                   {subcategories[category].map((subcategory) => (
-                    <li key={subcategory.id}>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start font-medium"
-                        onClick={() => {
-                          // You can handle subcategory selection here
-                          console.log("Selected subcategory:", subcategory.name);
-                        }}
-                      >
-                        {subcategory.name}
-                      </Button>
-                    </li>
+                    <Button
+                      key={subcategory.id}
+                      variant="ghost"
+                      className="w-full justify-start px-4 py-2 text-sm text-gray-700 hover:bg-magazine-red hover:text-white transition-colors"
+                      onClick={() => {
+                        // You can handle subcategory selection here
+                        console.log("Selected subcategory:", subcategory.name);
+                      }}
+                    >
+                      {subcategory.name}
+                    </Button>
                   ))}
-                </ul>
+                </div>
               </NavigationMenuContent>
             )}
           </NavigationMenuItem>
