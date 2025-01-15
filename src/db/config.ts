@@ -1,11 +1,28 @@
 import { Pool } from 'pg';
+import mysql from 'mysql2/promise';
 
-const pool = new Pool({
-  user: 'postgres',      // votre nom d'utilisateur PostgreSQL
-  host: 'localhost',     // l'hôte de votre base de données
-  database: 'car_magazine', // le nom de la base de données
-  password: 'postgres',  // votre mot de passe PostgreSQL
-  port: 5432,           // le port par défaut de PostgreSQL
+// Configuration PostgreSQL (Supabase) - gardée pour référence
+const pgPool = new Pool({
+  user: 'postgres',
+  host: 'localhost',
+  database: 'car_magazine',
+  password: 'postgres',
+  port: 5432,
 });
 
-export default pool;
+// Nouvelle configuration MySQL
+const mysqlPool = mysql.createPool({
+  host: 'localhost',
+  user: 'root',      // remplacez par votre nom d'utilisateur MySQL
+  password: '',      // remplacez par votre mot de passe MySQL
+  database: 'car_magazine',
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
+});
+
+// Exportez la connexion MySQL par défaut
+export default mysqlPool;
+
+// Gardez l'ancienne connexion disponible si nécessaire
+export { pgPool };
