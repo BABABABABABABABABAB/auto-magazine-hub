@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { supabase } from "@/integrations/supabase/client";
-import { ChevronRight, Menu, X } from "lucide-react";
+import { ChevronDown, ChevronRight, Menu, X } from "lucide-react";
 
 interface CategoryFilterProps {
   categories: string[];
@@ -16,8 +16,8 @@ export const CategoryFilter = ({
   onSelectCategory,
 }: CategoryFilterProps) => {
   const [subcategories, setSubcategories] = useState<Record<string, any[]>>({});
-  const [isOpen, setIsOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchSubcategories = async () => {
@@ -47,6 +47,14 @@ export const CategoryFilter = ({
     fetchSubcategories();
   }, []);
 
+  const toggleCategory = (category: string) => {
+    setExpandedCategories((prev) =>
+      prev.includes(category)
+        ? prev.filter((c) => c !== category)
+        : [...prev, category]
+    );
+  };
+
   const allCategories = ["Tout", ...categories];
 
   return (
@@ -59,13 +67,16 @@ export const CategoryFilter = ({
               <li key={category} className="relative group">
                 <button
                   onClick={() => onSelectCategory(category === "Tout" ? null : category)}
-                  className={`text-sm font-medium hover:text-magazine-red transition-colors ${
+                  className={`text-sm font-medium hover:text-magazine-red transition-colors flex items-center gap-1 ${
                     (category === "Tout" && !selectedCategory) || selectedCategory === category
                       ? "text-magazine-red"
                       : "text-white"
                   }`}
                 >
                   {category}
+                  {category !== "Tout" && subcategories[category]?.length > 0 && (
+                    <ChevronDown className="h-4 w-4" />
+                  )}
                 </button>
                 
                 {category !== "Tout" && subcategories[category]?.length > 0 && (
@@ -104,61 +115,70 @@ export const CategoryFilter = ({
         </SheetTrigger>
         <SheetContent
           side="left"
-          className="w-[280px] bg-white p-0"
+          className="w-[280px] bg-white p-0 overflow-hidden flex flex-col"
         >
-          <div className="flex flex-col h-full">
-            <div className="flex items-center justify-between p-4 border-b">
-              <h2 className="font-bold text-lg">Catégories</h2>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="hover:bg-magazine-red hover:text-white rounded-full"
-              >
-                <X className="h-5 w-5" />
-              </Button>
-            </div>
-            
-            <div className="flex-1 overflow-y-auto">
-              <div className="py-2">
-                {allCategories.map((category) => (
-                  <div key={category} className="space-y-1">
-                    <button
-                      onClick={() => {
-                        onSelectCategory(category === "Tout" ? null : category);
+          <div className="flex items-center justify-between p-4 border-b bg-magazine-black text-white">
+            <h2 className="font-bold text-lg">Catégories</h2>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="hover:bg-magazine-red text-white rounded-full"
+            >
+              <X className="h-5 w-5" />
+            </Button>
+          </div>
+          
+          <div className="flex-1 overflow-y-auto">
+            <div className="py-2">
+              {allCategories.map((category) => (
+                <div key={category} className="border-b border-gray-100">
+                  <button
+                    onClick={() => {
+                      if (category === "Tout") {
+                        onSelectCategory(null);
                         setIsMobileMenuOpen(false);
-                      }}
-                      className={`w-full text-left px-4 py-3 flex items-center justify-between ${
-                        (category === "Tout" && !selectedCategory) || selectedCategory === category
-                          ? "text-magazine-red"
-                          : "text-gray-800"
-                      } hover:bg-gray-100`}
-                    >
-                      <span className="font-medium">{category}</span>
-                      {category !== "Tout" && subcategories[category]?.length > 0 && (
+                      } else if (!subcategories[category]?.length) {
+                        onSelectCategory(category);
+                        setIsMobileMenuOpen(false);
+                      } else {
+                        toggleCategory(category);
+                      }
+                    }}
+                    className={`w-full text-left px-4 py-3 flex items-center justify-between ${
+                      (category === "Tout" && !selectedCategory) || selectedCategory === category
+                        ? "text-magazine-red"
+                        : "text-gray-800"
+                    } hover:bg-gray-50`}
+                  >
+                    <span className="font-medium">{category}</span>
+                    {category !== "Tout" && subcategories[category]?.length > 0 && (
+                      expandedCategories.includes(category) ? (
+                        <ChevronDown className="h-4 w-4" />
+                      ) : (
                         <ChevronRight className="h-4 w-4" />
-                      )}
-                    </button>
-                    
-                    {category !== "Tout" && subcategories[category] && (
-                      <div className="pl-4 space-y-1 bg-gray-50">
-                        {subcategories[category].map((subcategory) => (
-                          <button
-                            key={subcategory.id}
-                            onClick={() => {
-                              console.log("Selected subcategory:", subcategory.name);
-                              setIsMobileMenuOpen(false);
-                            }}
-                            className="w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-magazine-red"
-                          >
-                            {subcategory.name}
-                          </button>
-                        ))}
-                      </div>
+                      )
                     )}
-                  </div>
-                ))}
-              </div>
+                  </button>
+                  
+                  {category !== "Tout" && subcategories[category] && expandedCategories.includes(category) && (
+                    <div className="bg-gray-50">
+                      {subcategories[category].map((subcategory) => (
+                        <button
+                          key={subcategory.id}
+                          onClick={() => {
+                            console.log("Selected subcategory:", subcategory.name);
+                            setIsMobileMenuOpen(false);
+                          }}
+                          className="w-full text-left px-6 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-magazine-red"
+                        >
+                          {subcategory.name}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         </SheetContent>
