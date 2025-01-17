@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
+import { Loader2 } from "lucide-react";
 
 interface CategorySectionProps {
   setValue: UseFormSetValue<ArticleFormData>;
@@ -18,6 +19,7 @@ interface CategorySectionProps {
 
 export const CategorySection = ({ setValue }: CategorySectionProps) => {
   const [subcategories, setSubcategories] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -30,6 +32,7 @@ export const CategorySection = ({ setValue }: CategorySectionProps) => {
 
         if (error) throw error;
 
+        console.log("Fetched subcategories:", data); // Debug log
         setSubcategories(data || []);
       } catch (error) {
         console.error("Error fetching subcategories:", error);
@@ -38,6 +41,8 @@ export const CategorySection = ({ setValue }: CategorySectionProps) => {
           description: "Impossible de charger les sous-catégories",
           variant: "destructive",
         });
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -50,21 +55,30 @@ export const CategorySection = ({ setValue }: CategorySectionProps) => {
         <CardTitle>Catégorie</CardTitle>
       </CardHeader>
       <CardContent>
-        <Select
-          onValueChange={(value) => setValue("subcategory_id", value)}
-          required
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Sélectionner une sous-catégorie" />
-          </SelectTrigger>
-          <SelectContent>
-            {subcategories.map((subcat) => (
-              <SelectItem key={subcat.id} value={subcat.id}>
-                {subcat.name} ({subcat.categories?.name})
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {loading ? (
+          <div className="flex items-center justify-center py-4">
+            <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
+          </div>
+        ) : (
+          <Select
+            onValueChange={(value) => {
+              console.log("Selected subcategory:", value); // Debug log
+              setValue("subcategory_id", value);
+            }}
+            required
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Sélectionner une sous-catégorie" />
+            </SelectTrigger>
+            <SelectContent>
+              {subcategories.map((subcat) => (
+                <SelectItem key={subcat.id} value={subcat.id}>
+                  {subcat.name} ({subcat.categories?.name})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
       </CardContent>
     </Card>
   );
