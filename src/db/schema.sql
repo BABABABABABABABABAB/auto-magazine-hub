@@ -1,44 +1,27 @@
--- Création des tables si elles n'existent pas déjà
-CREATE TABLE IF NOT EXISTS categories (
+CREATE TABLE categories (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    slug VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    name VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS subcategories (
+CREATE TABLE sub_categories (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    slug VARCHAR(255) NOT NULL,
-    category_id INTEGER REFERENCES categories(id) ON DELETE CASCADE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    category_id INTEGER REFERENCES categories(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS articles (
+CREATE TABLE articles (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
-    excerpt TEXT,
-    featured_image VARCHAR(255),
-    subcategory_id INTEGER REFERENCES subcategories(id) ON DELETE CASCADE,
-    status VARCHAR(255) DEFAULT 'draft',
-    view_count INTEGER DEFAULT 0,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    preview_token UUID DEFAULT gen_random_uuid(),
-    hidden BOOLEAN DEFAULT false,
-    meta_title VARCHAR(255),
-    meta_description TEXT,
-    slug VARCHAR(255),
-    "order" INTEGER DEFAULT 0
+    image_url VARCHAR(255) NOT NULL,
+    category_id INTEGER REFERENCES categories(id) ON DELETE CASCADE,
+    sub_category_id INTEGER REFERENCES sub_categories(id) ON DELETE CASCADE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS home_settings (
+-- Admin table for authentication
+CREATE TABLE admins (
     id SERIAL PRIMARY KEY,
-    background_type VARCHAR(255) NOT NULL DEFAULT 'image',
-    background_url TEXT NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    username VARCHAR(255) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL
 );
