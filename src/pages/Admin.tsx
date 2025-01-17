@@ -12,7 +12,7 @@ const Admin = () => {
   const isNewArticlePage = location.pathname.includes('nouvel-article');
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-magazine-red">
       <header className="bg-magazine-red text-white p-4 flex justify-between items-center shrink-0 sticky top-0 z-50">
         <h1 className="text-3xl font-bold">Admin Dashboard</h1>
         <div className="space-x-4">
