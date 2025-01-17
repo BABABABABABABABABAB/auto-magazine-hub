@@ -144,7 +144,7 @@ const Home = () => {
       {/* Banner */}
       {bannerSettings.background_url && (
         <div 
-          className="w-full h-[300px] bg-cover bg-center"
+          className="w-full h-[200px] md:h-[300px] lg:h-[400px] bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: `url(${bannerSettings.background_url})`
           }}
