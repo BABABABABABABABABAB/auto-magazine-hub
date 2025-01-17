@@ -13,7 +13,7 @@ export const getArticleById = async (id: number) => {
 
 export const createArticle = async (title: string, content: string, imageUrl: string, categoryId: number, subCategoryId: number) => {
   const result = await pool.query(
-    'INSERT INTO articles (title, content, image_url, category_id, sub_category_id) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+    'INSERT INTO articles (title, content, featured_image, category_id, subcategory_id) VALUES ($1, $2, $3, $4, $5) RETURNING *',
     [title, content, imageUrl, categoryId, subCategoryId]
   );
   return result.rows[0];
@@ -25,10 +25,10 @@ export const getCategories = async () => {
   return result.rows;
 };
 
-export const createCategory = async (name: string) => {
+export const createCategory = async (name: string, slug: string) => {
   const result = await pool.query(
-    'INSERT INTO categories (name) VALUES ($1) RETURNING *',
-    [name]
+    'INSERT INTO categories (name, slug) VALUES ($1, $2) RETURNING *',
+    [name, slug]
   );
   return result.rows[0];
 };
@@ -39,10 +39,24 @@ export const getSubCategories = async (categoryId: number) => {
   return result.rows;
 };
 
-export const createSubCategory = async (name: string, categoryId: number) => {
+export const createSubCategory = async (name: string, slug: string, categoryId: number) => {
   const result = await pool.query(
-    'INSERT INTO sub_categories (name, category_id) VALUES ($1, $2) RETURNING *',
-    [name, categoryId]
+    'INSERT INTO subcategories (name, slug, category_id) VALUES ($1, $2, $3) RETURNING *',
+    [name, slug, categoryId]
+  );
+  return result.rows[0];
+};
+
+// Opérations pour les paramètres de la page d'accueil
+export const getHomeSettings = async () => {
+  const result = await pool.query('SELECT * FROM home_settings LIMIT 1');
+  return result.rows[0];
+};
+
+export const updateHomeSettings = async (backgroundType: string, backgroundUrl: string) => {
+  const result = await pool.query(
+    'UPDATE home_settings SET background_type = $1, background_url = $2, updated_at = CURRENT_TIMESTAMP WHERE id = 1 RETURNING *',
+    [backgroundType, backgroundUrl]
   );
   return result.rows[0];
 };
