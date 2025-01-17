@@ -15,7 +15,6 @@ interface ArticleFormProps {
 }
 
 export const ArticleForm = ({ initialData }: ArticleFormProps) => {
-  const [subcategories, setSubcategories] = useState([]);
   const [uploading, setUploading] = useState(false);
   const { register, handleSubmit, setValue, watch } = useForm<ArticleFormData>({
     defaultValues: {
@@ -26,28 +25,6 @@ export const ArticleForm = ({ initialData }: ArticleFormProps) => {
   });
   const { toast } = useToast();
   const navigate = useNavigate();
-
-  const fetchSubcategories = async () => {
-    const { data, error } = await supabase
-      .from("subcategories")
-      .select(`*, categories(name)`)
-      .order("name", { ascending: true });
-
-    if (error) {
-      toast({
-        title: "Erreur",
-        description: "Impossible de charger les sous-catégories",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setSubcategories(data);
-  };
-
-  useEffect(() => {
-    fetchSubcategories();
-  }, []);
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -87,25 +64,26 @@ export const ArticleForm = ({ initialData }: ArticleFormProps) => {
   };
 
   const onSubmit = async (data: ArticleFormData) => {
-    const { error } = initialData 
-      ? await supabase.from("articles").update(data).eq('id', initialData.id)
-      : await supabase.from("articles").insert([data]);
+    try {
+      const { error } = initialData 
+        ? await supabase.from("articles").update(data).eq('id', initialData.id)
+        : await supabase.from("articles").insert([data]);
 
-    if (error) {
+      if (error) throw error;
+
+      toast({
+        title: "Succès",
+        description: initialData ? "Article modifié avec succès" : "Article créé avec succès",
+      });
+      
+      navigate("/admin");
+    } catch (error) {
       toast({
         title: "Erreur",
         description: initialData ? "Impossible de modifier l'article" : "Impossible de créer l'article",
         variant: "destructive",
       });
-      return;
     }
-
-    toast({
-      title: "Succès",
-      description: initialData ? "Article modifié avec succès" : "Article créé avec succès",
-    });
-    
-    navigate("/admin");
   };
 
   return (
@@ -122,7 +100,7 @@ export const ArticleForm = ({ initialData }: ArticleFormProps) => {
         </div>
 
         <div className="space-y-8">
-          <CategorySection setValue={setValue} subcategories={subcategories} />
+          <CategorySection setValue={setValue} />
           <SEOSection register={register} />
           <PublishSection watch={watch} setValue={setValue} />
         </div>
