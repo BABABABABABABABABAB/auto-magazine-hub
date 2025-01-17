@@ -3,6 +3,7 @@ import { ArticleGrid } from "@/components/ArticleGrid";
 import { CategoryFilter } from "@/components/CategoryFilter";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { Separator } from "@/components/ui/separator";
 
 const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -163,6 +164,11 @@ const Home = () => {
           />
         )
       )}
+
+      {/* Red Separator */}
+      <div className="container mx-auto my-8">
+        <Separator className="bg-magazine-red h-0.5" />
+      </div>
 
       {/* Articles Grid */}
       <main className="container mx-auto py-8">
