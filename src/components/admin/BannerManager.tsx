@@ -8,6 +8,7 @@ import { ImagePreview } from "./banner/ImagePreview";
 
 export const BannerManager = () => {
   const [imageUrl, setImageUrl] = useState("");
+  const [linkUrl, setLinkUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const { toast } = useToast();
@@ -35,6 +36,7 @@ export const BannerManager = () => {
 
     if (data) {
       setImageUrl(data.background_url);
+      setLinkUrl(data.link_url || "");
     }
   };
 
@@ -80,7 +82,8 @@ export const BannerManager = () => {
         .insert([
           {
             background_url: finalImageUrl,
-            background_type: 'image'
+            background_type: 'image',
+            link_url: linkUrl
           }
         ]);
 
@@ -120,6 +123,20 @@ export const BannerManager = () => {
             imageUrl={imageUrl}
             onUrlChange={(e) => setImageUrl(e.target.value)}
           />
+
+          <div className="space-y-2">
+            <label htmlFor="linkUrl" className="block text-sm font-medium text-gray-700">
+              URL du lien (optionnel)
+            </label>
+            <input
+              type="url"
+              id="linkUrl"
+              value={linkUrl}
+              onChange={(e) => setLinkUrl(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-magazine-red focus:border-magazine-red"
+              placeholder="https://example.com"
+            />
+          </div>
         </div>
 
         <ImagePreview imageUrl={imageUrl} file={file} />

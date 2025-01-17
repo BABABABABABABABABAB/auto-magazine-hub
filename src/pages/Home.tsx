@@ -11,7 +11,8 @@ const Home = () => {
   const [categories, setCategories] = useState([]);
   const [bannerSettings, setBannerSettings] = useState({
     background_url: '',
-    background_type: 'image'
+    background_type: 'image',
+    link_url: ''
   });
   const { toast } = useToast();
 
@@ -143,12 +144,24 @@ const Home = () => {
 
       {/* Banner */}
       {bannerSettings.background_url && (
-        <div 
-          className="w-full h-[200px] md:h-[300px] lg:h-[400px] bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: `url(${bannerSettings.background_url})`
-          }}
-        />
+        bannerSettings.link_url ? (
+          <a 
+            href={bannerSettings.link_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block w-full h-[200px] md:h-[300px] lg:h-[400px] bg-cover bg-center bg-no-repeat cursor-pointer transition-opacity hover:opacity-90"
+            style={{
+              backgroundImage: `url(${bannerSettings.background_url})`
+            }}
+          />
+        ) : (
+          <div 
+            className="w-full h-[200px] md:h-[300px] lg:h-[400px] bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: `url(${bannerSettings.background_url})`
+            }}
+          />
+        )
       )}
 
       {/* Articles Grid */}
