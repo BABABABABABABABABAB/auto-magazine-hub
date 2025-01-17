@@ -16,10 +16,10 @@ const Admin = () => {
       <header className="bg-magazine-red text-white p-4 flex justify-between items-center shrink-0 sticky top-0 z-50">
         <h1 className="text-3xl font-bold">Admin Dashboard</h1>
         <div className="space-x-4">
-          <Button variant="outline" className="text-white border-white hover:bg-red-600" asChild>
+          <Button variant="outline" className="bg-white text-magazine-red hover:bg-gray-100" asChild>
             <Link to="/admin/nouvel-article">Nouvel Article</Link>
           </Button>
-          <Button variant="outline" className="text-white border-white hover:bg-red-600" asChild>
+          <Button variant="outline" className="bg-white text-magazine-red hover:bg-gray-100" asChild>
             <Link to="/">Voir le Site</Link>
           </Button>
         </div>
@@ -42,7 +42,7 @@ const Admin = () => {
                 <TabsContent value="articles" className="mt-6">
                   <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-bold">Articles</h2>
-                    <Button className="bg-magazine-red hover:bg-red-600" asChild>
+                    <Button className="bg-white text-magazine-red hover:bg-gray-100" asChild>
                       <Link to="/admin/nouvel-article">Nouvel Article</Link>
                     </Button>
                   </div>
