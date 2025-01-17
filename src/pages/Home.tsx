@@ -4,6 +4,17 @@ import { CategoryFilter } from "@/components/CategoryFilter";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { Separator } from "@/components/ui/separator";
+import { 
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+
+const ARTICLES_PER_PAGE = 12;
 
 const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -15,6 +26,8 @@ const Home = () => {
     background_type: 'image',
     link_url: ''
   });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -67,6 +80,34 @@ const Home = () => {
 
   useEffect(() => {
     const fetchArticles = async () => {
+      // First, get total count for pagination
+      let countQuery = supabase
+        .from("articles")
+        .select('id', { count: 'exact' })
+        .eq("hidden", false);
+
+      if (selectedCategory) {
+        countQuery = countQuery.eq("subcategories.categories.name", selectedCategory);
+      }
+
+      if (selectedSubcategoryId) {
+        countQuery = countQuery.eq("subcategory_id", selectedSubcategoryId);
+      }
+
+      const { count, error: countError } = await countQuery;
+
+      if (countError) {
+        toast({
+          title: "Erreur",
+          description: "Impossible de compter les articles",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setTotalPages(Math.ceil((count || 0) / ARTICLES_PER_PAGE));
+
+      // Then fetch the articles for current page
       let query = supabase
         .from("articles")
         .select(`
@@ -83,7 +124,8 @@ const Home = () => {
           )
         `)
         .eq("hidden", false)
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: false })
+        .range((currentPage - 1) * ARTICLES_PER_PAGE, currentPage * ARTICLES_PER_PAGE - 1);
 
       if (selectedCategory) {
         query = query.eq("subcategories.categories.name", selectedCategory);
@@ -117,7 +159,7 @@ const Home = () => {
     };
 
     fetchArticles();
-  }, [selectedCategory, selectedSubcategoryId, toast]);
+  }, [selectedCategory, selectedSubcategoryId, currentPage, toast]);
 
   return (
     <div className="min-h-screen bg-[#222222] text-white">
@@ -139,7 +181,7 @@ const Home = () => {
             onSelectCategory={setSelectedCategory}
             onSelectSubcategory={(subcategoryId) => {
               setSelectedSubcategoryId(subcategoryId);
-              console.log("Selected subcategory ID:", subcategoryId);
+              setCurrentPage(1); // Reset to first page when changing category
             }}
           />
         </div>
@@ -172,9 +214,70 @@ const Home = () => {
         <Separator className="bg-magazine-red h-1" />
       </div>
 
+      {/* Recent Articles Title Band */}
+      <div className="bg-magazine-red py-3 mb-8">
+        <div className="container mx-auto">
+          <h2 className="text-2xl font-bold text-white text-left">Articles récents</h2>
+        </div>
+      </div>
+
       {/* Articles Grid */}
       <main className="container mx-auto py-8">
         <ArticleGrid articles={articles} />
+        
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="mt-8">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious 
+                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                  />
+                </PaginationItem>
+                
+                {[...Array(totalPages)].map((_, index) => {
+                  const pageNumber = index + 1;
+                  // Show first page, current page, last page, and pages around current page
+                  if (
+                    pageNumber === 1 ||
+                    pageNumber === totalPages ||
+                    (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
+                  ) {
+                    return (
+                      <PaginationItem key={pageNumber}>
+                        <PaginationLink
+                          onClick={() => setCurrentPage(pageNumber)}
+                          isActive={currentPage === pageNumber}
+                        >
+                          {pageNumber}
+                        </PaginationLink>
+                      </PaginationItem>
+                    );
+                  } else if (
+                    pageNumber === currentPage - 2 ||
+                    pageNumber === currentPage + 2
+                  ) {
+                    return (
+                      <PaginationItem key={pageNumber}>
+                        <PaginationEllipsis />
+                      </PaginationItem>
+                    );
+                  }
+                  return null;
+                })}
+
+                <PaginationItem>
+                  <PaginationNext 
+                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                    className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        )}
       </main>
     </div>
   );
