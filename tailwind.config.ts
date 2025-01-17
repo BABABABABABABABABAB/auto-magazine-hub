@@ -23,7 +23,7 @@ export default {
           black: "#000000",
           red: "#FF0000",
           gray: "#808080",
-          background: "#f3f3f3",
+          background: "#262626",
         },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
