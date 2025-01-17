@@ -117,7 +117,7 @@ const Home = () => {
   }, [selectedCategory, selectedSubcategoryId, toast]);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#222222] text-white">
       {/* Logo Bar */}
       <div className="bg-magazine-red py-4">
         <div className="container mx-auto">
@@ -165,7 +165,7 @@ const Home = () => {
       )}
 
       {/* Articles Grid */}
-      <main className="container mx-auto">
+      <main className="container mx-auto py-8">
         <ArticleGrid articles={articles} />
       </main>
     </div>
