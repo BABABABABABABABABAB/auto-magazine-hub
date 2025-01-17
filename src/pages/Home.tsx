@@ -3,10 +3,10 @@ import { ArticleGrid } from "@/components/ArticleGrid";
 import { CategoryFilter } from "@/components/CategoryFilter";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { NavigationMenu } from "@/components/ui/navigation-menu";
 
 const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedSubcategoryId, setSelectedSubcategoryId] = useState<string | null>(null);
   const [articles, setArticles] = useState([]);
   const [categories, setCategories] = useState([]);
   const [bannerSettings, setBannerSettings] = useState({
@@ -72,6 +72,7 @@ const Home = () => {
           title,
           featured_image,
           subcategories!inner (
+            id,
             name,
             categories!inner (
               name
@@ -83,6 +84,10 @@ const Home = () => {
 
       if (selectedCategory) {
         query = query.eq("subcategories.categories.name", selectedCategory);
+      }
+
+      if (selectedSubcategoryId) {
+        query = query.eq("subcategory_id", selectedSubcategoryId);
       }
 
       const { data, error } = await query;
@@ -100,14 +105,15 @@ const Home = () => {
         id: article.id,
         title: article.title,
         imageUrl: article.featured_image || "/placeholder.svg",
-        category: article.subcategories?.categories?.name || "Non catégorisé"
+        category: article.subcategories?.categories?.name || "Non catégorisé",
+        subcategory: article.subcategories?.name || "Non catégorisé"
       }));
 
       setArticles(formattedArticles);
     };
 
     fetchArticles();
-  }, [selectedCategory, toast]);
+  }, [selectedCategory, selectedSubcategoryId, toast]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -127,6 +133,10 @@ const Home = () => {
             categories={categories}
             selectedCategory={selectedCategory}
             onSelectCategory={setSelectedCategory}
+            onSelectSubcategory={(subcategoryId) => {
+              setSelectedSubcategoryId(subcategoryId);
+              console.log("Selected subcategory ID:", subcategoryId);
+            }}
           />
         </div>
       </nav>

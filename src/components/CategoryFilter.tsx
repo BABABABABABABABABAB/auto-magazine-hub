@@ -8,12 +8,14 @@ interface CategoryFilterProps {
   categories: string[];
   selectedCategory: string | null;
   onSelectCategory: (category: string | null) => void;
+  onSelectSubcategory?: (subcategoryId: string) => void;
 }
 
 export const CategoryFilter = ({
   categories,
   selectedCategory,
   onSelectCategory,
+  onSelectSubcategory,
 }: CategoryFilterProps) => {
   const [subcategories, setSubcategories] = useState<Record<string, any[]>>({});
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -55,6 +57,15 @@ export const CategoryFilter = ({
     );
   };
 
+  const handleSubcategoryClick = (subcategoryId: string, event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (onSelectSubcategory) {
+      onSelectSubcategory(subcategoryId);
+      setIsMobileMenuOpen(false);
+    }
+  };
+
   const allCategories = ["Tout", ...categories];
 
   return (
@@ -86,9 +97,7 @@ export const CategoryFilter = ({
                         <button
                           key={subcategory.id}
                           className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-magazine-red hover:text-white transition-colors"
-                          onClick={() => {
-                            console.log("Selected subcategory:", subcategory.name);
-                          }}
+                          onClick={(e) => handleSubcategoryClick(subcategory.id, e)}
                         >
                           {subcategory.name}
                         </button>
@@ -166,10 +175,7 @@ export const CategoryFilter = ({
                       {subcategories[category].map((subcategory) => (
                         <button
                           key={subcategory.id}
-                          onClick={() => {
-                            console.log("Selected subcategory:", subcategory.name);
-                            setIsMobileMenuOpen(false);
-                          }}
+                          onClick={(e) => handleSubcategoryClick(subcategory.id, e)}
                           className="w-full text-left px-6 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-magazine-red"
                         >
                           {subcategory.name}

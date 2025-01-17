@@ -2,13 +2,14 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 
 interface ArticleCardProps {
-  id: string;  // Changed from number to string for UUID
+  id: string;
   title: string;
   imageUrl: string;
   category: string;
+  subcategory: string;
 }
 
-export const ArticleCard = ({ id, title, imageUrl, category }: ArticleCardProps) => {
+export const ArticleCard = ({ id, title, imageUrl, category, subcategory }: ArticleCardProps) => {
   return (
     <Link to={`/article/${id}`}>
       <Card className="hover:shadow-lg transition-shadow duration-300">
@@ -20,8 +21,10 @@ export const ArticleCard = ({ id, title, imageUrl, category }: ArticleCardProps)
           />
         </CardHeader>
         <CardContent className="p-4">
-          <div className="text-magazine-red text-sm font-medium mb-2">
-            {category}
+          <div className="text-magazine-red text-sm font-medium mb-2 flex gap-2">
+            <span>{category}</span>
+            <span>•</span>
+            <span>{subcategory}</span>
           </div>
           <h3 className="font-roboto font-bold text-lg text-magazine-black">
             {title}

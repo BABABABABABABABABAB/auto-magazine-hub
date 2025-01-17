@@ -1,10 +1,11 @@
 import { ArticleCard } from "./ArticleCard";
 
 interface Article {
-  id: string;  // Changed from number to string for UUID
+  id: string;
   title: string;
   imageUrl: string;
   category: string;
+  subcategory: string;
 }
 
 interface ArticleGridProps {
@@ -21,6 +22,7 @@ export const ArticleGrid = ({ articles }: ArticleGridProps) => {
           title={article.title}
           imageUrl={article.imageUrl}
           category={article.category}
+          subcategory={article.subcategory}
         />
       ))}
     </div>
