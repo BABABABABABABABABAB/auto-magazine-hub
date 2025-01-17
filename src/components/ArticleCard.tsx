@@ -33,7 +33,7 @@ export const ArticleCard = ({ id, title, imageUrl, category, subcategory, create
             {title}
           </h3>
           {createdAt && (
-            <p className="text-sm text-magazine-gray">
+            <p className="text-base text-magazine-black font-medium">
               {format(new Date(createdAt), "d MMMM yyyy", { locale: fr })}
             </p>
           )}
