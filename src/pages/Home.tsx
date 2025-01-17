@@ -73,6 +73,7 @@ const Home = () => {
           id,
           title,
           featured_image,
+          created_at,
           subcategories!inner (
             id,
             name,
@@ -108,7 +109,8 @@ const Home = () => {
         title: article.title,
         imageUrl: article.featured_image || "/placeholder.svg",
         category: article.subcategories?.categories?.name || "Non catégorisé",
-        subcategory: article.subcategories?.name || "Non catégorisé"
+        subcategory: article.subcategories?.name || "Non catégorisé",
+        createdAt: article.created_at
       }));
 
       setArticles(formattedArticles);
@@ -167,7 +169,7 @@ const Home = () => {
 
       {/* Red Separator */}
       <div className="container mx-auto my-8">
-        <Separator className="bg-magazine-red h-0.5" />
+        <Separator className="bg-magazine-red h-1" />
       </div>
 
       {/* Articles Grid */}
