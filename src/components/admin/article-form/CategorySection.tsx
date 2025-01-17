@@ -15,9 +15,10 @@ import { Loader2 } from "lucide-react";
 
 interface CategorySectionProps {
   setValue: UseFormSetValue<ArticleFormData>;
+  initialSubcategoryId?: string;
 }
 
-export const CategorySection = ({ setValue }: CategorySectionProps) => {
+export const CategorySection = ({ setValue, initialSubcategoryId }: CategorySectionProps) => {
   const [subcategories, setSubcategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
@@ -27,13 +28,25 @@ export const CategorySection = ({ setValue }: CategorySectionProps) => {
       try {
         const { data, error } = await supabase
           .from("subcategories")
-          .select(`*, categories(name)`)
+          .select(`
+            id,
+            name,
+            categories (
+              id,
+              name
+            )
+          `)
           .order('name', { ascending: true });
 
         if (error) throw error;
 
-        console.log("Fetched subcategories:", data); // Debug log
+        console.log("Fetched subcategories:", data);
         setSubcategories(data || []);
+        
+        // If there's an initial value, set it
+        if (initialSubcategoryId && data?.some(subcat => subcat.id === initialSubcategoryId)) {
+          setValue("subcategory_id", initialSubcategoryId);
+        }
       } catch (error) {
         console.error("Error fetching subcategories:", error);
         toast({
@@ -47,7 +60,7 @@ export const CategorySection = ({ setValue }: CategorySectionProps) => {
     };
 
     fetchSubcategories();
-  }, [toast]);
+  }, [toast, setValue, initialSubcategoryId]);
 
   return (
     <Card>
@@ -59,12 +72,17 @@ export const CategorySection = ({ setValue }: CategorySectionProps) => {
           <div className="flex items-center justify-center py-4">
             <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
           </div>
+        ) : subcategories.length === 0 ? (
+          <div className="text-center text-gray-500 py-4">
+            Aucune sous-catégorie disponible
+          </div>
         ) : (
           <Select
             onValueChange={(value) => {
-              console.log("Selected subcategory:", value); // Debug log
+              console.log("Selected subcategory:", value);
               setValue("subcategory_id", value);
             }}
+            defaultValue={initialSubcategoryId}
             required
           >
             <SelectTrigger>
