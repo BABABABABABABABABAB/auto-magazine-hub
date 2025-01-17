@@ -25,7 +25,7 @@ export const ArticlesManager = () => {
   const fetchArticles = async () => {
     const { data, error } = await supabase
       .from("articles")
-      .select(`*, subcategories(name)`)
+      .select(`*, subcategories(name, category:categories(name))`)
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -84,15 +84,6 @@ export const ArticlesManager = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-end">
-        <Button 
-          className="bg-magazine-red hover:bg-red-600"
-          onClick={() => navigate("/admin/nouvel-article")}
-        >
-          Nouvel Article
-        </Button>
-      </div>
-
       <Table>
         <TableHeader>
           <TableRow>
@@ -107,7 +98,9 @@ export const ArticlesManager = () => {
           {articles.map((article) => (
             <TableRow key={article.id}>
               <TableCell>{article.title}</TableCell>
-              <TableCell>{article.subcategories?.name}</TableCell>
+              <TableCell>
+                {article.subcategories?.category?.name} / {article.subcategories?.name}
+              </TableCell>
               <TableCell>
                 <span className="px-2 py-1 text-sm rounded-full bg-green-100 text-green-800">
                   {article.status || "draft"}
