@@ -28,10 +28,12 @@ export const MainContent = ({ selectedCategory, articles }: MainContentProps) =>
 
   return (
     <div className="container mx-auto py-8">
-      <h2 className="text-2xl font-bold text-white text-left mb-4">
-        Articles récents
-      </h2>
-      <Separator className="bg-magazine-red h-1" />
+      <div className="mb-2">
+        <h2 className="text-2xl font-bold text-white text-left">
+          Articles récents
+        </h2>
+        <Separator className="bg-magazine-red h-1 mt-2" />
+      </div>
       
       {/* Top 3 articles - Responsive grid */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
@@ -107,6 +109,7 @@ export const MainContent = ({ selectedCategory, articles }: MainContentProps) =>
           />
         ))}
       </div>
+      <Separator className="bg-magazine-red h-1 mt-8" />
     </div>
   );
 };
