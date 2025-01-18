@@ -95,9 +95,7 @@ export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
   const handleVoiceTranscript = (text: string) => {
     setPrompt(text);
     // Lancer automatiquement la génération après la transcription
-    setTimeout(() => {
-      handleGenerateFromPrompt();
-    }, 500);
+    handleGenerateFromPrompt();
   };
 
   const handleRegenerate = async () => {
