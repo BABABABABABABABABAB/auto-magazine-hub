@@ -57,7 +57,9 @@ export const CategoryFilter = ({
     );
   };
 
-  const handleSubcategoryClick = (subcategoryId: string) => {
+  const handleSubcategoryClick = (subcategoryId: string, event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
     if (onSelectSubcategory) {
       onSelectSubcategory(subcategoryId);
       setIsMobileMenuOpen(false);
@@ -65,16 +67,8 @@ export const CategoryFilter = ({
   };
 
   const handleCategoryClick = (category: string | null) => {
-    if (category === "Tout") {
-      onSelectCategory(null);
-      setIsMobileMenuOpen(false);
-    } else if (!subcategories[category as string]?.length) {
-      onSelectCategory(category);
-      setIsMobileMenuOpen(false);
-    } else {
-      onSelectCategory(category);
-      toggleCategory(category as string);
-    }
+    onSelectCategory(category);
+    setIsMobileMenuOpen(false);
   };
 
   const allCategories = ["Tout", ...categories];
@@ -108,7 +102,7 @@ export const CategoryFilter = ({
                         <button
                           key={subcategory.id}
                           className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-magazine-red hover:text-white transition-colors"
-                          onClick={() => handleSubcategoryClick(subcategory.id)}
+                          onClick={(e) => handleSubcategoryClick(subcategory.id, e)}
                         >
                           {subcategory.name}
                         </button>
@@ -154,7 +148,15 @@ export const CategoryFilter = ({
               {allCategories.map((category) => (
                 <div key={category} className="border-b border-gray-100">
                   <button
-                    onClick={() => handleCategoryClick(category === "Tout" ? null : category)}
+                    onClick={() => {
+                      if (category === "Tout") {
+                        handleCategoryClick(null);
+                      } else if (!subcategories[category]?.length) {
+                        handleCategoryClick(category);
+                      } else {
+                        toggleCategory(category);
+                      }
+                    }}
                     className={`w-full text-left px-4 py-3 flex items-center justify-between ${
                       (category === "Tout" && !selectedCategory) || selectedCategory === category
                         ? "text-magazine-red"
@@ -176,7 +178,7 @@ export const CategoryFilter = ({
                       {subcategories[category].map((subcategory) => (
                         <button
                           key={subcategory.id}
-                          onClick={() => handleSubcategoryClick(subcategory.id)}
+                          onClick={(e) => handleSubcategoryClick(subcategory.id, e)}
                           className="w-full text-left px-6 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-magazine-red"
                         >
                           {subcategory.name}
