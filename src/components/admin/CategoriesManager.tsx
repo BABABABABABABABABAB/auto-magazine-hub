@@ -85,8 +85,8 @@ export const CategoriesManager = () => {
   };
 
   return (
-    <div className="space-y-6">
-      <form onSubmit={handleSubmit} className="grid gap-4">
+    <div className="space-y-8">
+      <form onSubmit={handleSubmit} className="grid gap-6">
         <div className="grid gap-2">
           <label htmlFor="categoryName" className="text-sm font-medium">
             Nom de la catégorie

@@ -33,7 +33,7 @@ const Admin = () => {
           <ScrollArea className="h-[calc(100vh-5rem)] rounded-lg border bg-white shadow-sm">
             <div className="p-4 sm:p-6">
               <Tabs defaultValue="articles" className="w-full">
-                <TabsList className="mb-4 flex flex-wrap gap-2">
+                <TabsList className="mb-8 flex flex-wrap gap-2">
                   <TabsTrigger value="articles" className="text-lg">Articles</TabsTrigger>
                   <TabsTrigger value="categories" className="text-lg">Catégories</TabsTrigger>
                   <TabsTrigger value="subcategories" className="text-lg">Sous-catégories</TabsTrigger>
@@ -41,38 +41,41 @@ const Admin = () => {
                   <TabsTrigger value="vertical-banner" className="text-lg">Bannière Verticale</TabsTrigger>
                 </TabsList>
                 
-                <TabsContent value="articles" className="mt-6">
-                  <div className="flex justify-between items-center mb-6">
+                <TabsContent value="articles" className="mt-8">
+                  <div className="flex justify-between items-center mb-8">
                     <h2 className="text-2xl font-bold">Articles</h2>
-                    <Button className="bg-white text-magazine-red hover:bg-gray-100" asChild>
+                    <Button className="bg-magazine-red text-white hover:bg-magazine-red/90" asChild>
                       <Link to="/admin/nouvel-article">Nouvel Article</Link>
                     </Button>
                   </div>
                   <ArticlesManager />
                 </TabsContent>
                 
-                <TabsContent value="categories" className="mt-6">
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div className="space-y-4">
-                      <h2 className="text-2xl font-bold">Catégories</h2>
+                <TabsContent value="categories" className="mt-8">
+                  <div className="grid grid-cols-1 gap-12">
+                    <div className="space-y-6">
+                      <h2 className="text-2xl font-bold mb-6">Catégories</h2>
                       <CategoriesManager />
                     </div>
-                    <div className="space-y-4">
-                      <h2 className="text-2xl font-bold">Sous-catégories</h2>
+                    <div className="space-y-6">
+                      <h2 className="text-2xl font-bold mb-6">Sous-catégories</h2>
                       <SubcategoriesManager />
                     </div>
                   </div>
                 </TabsContent>
                 
-                <TabsContent value="subcategories" className="mt-6">
+                <TabsContent value="subcategories" className="mt-8">
+                  <h2 className="text-2xl font-bold mb-6">Sous-catégories</h2>
                   <SubcategoriesManager />
                 </TabsContent>
 
-                <TabsContent value="banner" className="mt-6">
+                <TabsContent value="banner" className="mt-8">
+                  <h2 className="text-2xl font-bold mb-6">Bannière</h2>
                   <BannerManager />
                 </TabsContent>
 
-                <TabsContent value="vertical-banner" className="mt-6">
+                <TabsContent value="vertical-banner" className="mt-8">
+                  <h2 className="text-2xl font-bold mb-6">Bannière Verticale</h2>
                   <VerticalBannerManager />
                 </TabsContent>
               </Tabs>
