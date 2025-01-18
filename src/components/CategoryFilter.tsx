@@ -66,6 +66,13 @@ export const CategoryFilter = ({
     }
   };
 
+  const handleCategoryClick = (category: string | null) => {
+    onSelectCategory(category);
+    if (!subcategories[category as string]?.length) {
+      setIsMobileMenuOpen(false);
+    }
+  };
+
   const allCategories = ["Tout", ...categories];
 
   return (
@@ -77,7 +84,7 @@ export const CategoryFilter = ({
             {allCategories.map((category) => (
               <li key={category} className="relative group">
                 <button
-                  onClick={() => onSelectCategory(category === "Tout" ? null : category)}
+                  onClick={() => handleCategoryClick(category === "Tout" ? null : category)}
                   className={`text-sm font-medium px-4 transition-colors flex items-center gap-1 h-12 ${
                     (category === "Tout" && !selectedCategory) || selectedCategory === category
                       ? "text-magazine-red"
@@ -145,11 +152,9 @@ export const CategoryFilter = ({
                   <button
                     onClick={() => {
                       if (category === "Tout") {
-                        onSelectCategory(null);
-                        setIsMobileMenuOpen(false);
+                        handleCategoryClick(null);
                       } else if (!subcategories[category]?.length) {
-                        onSelectCategory(category);
-                        setIsMobileMenuOpen(false);
+                        handleCategoryClick(category);
                       } else {
                         toggleCategory(category);
                       }
