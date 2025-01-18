@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { VerticalBanner } from "@/components/article/VerticalBanner";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { SocialShare } from "@/components/article/SocialShare";
 
 const Article = () => {
   const { id } = useParams<{ id: string }>();
@@ -58,6 +59,8 @@ const Article = () => {
     return <div>Article non trouvé</div>;
   }
 
+  const currentUrl = window.location.href;
+
   return (
     <div className="max-w-7xl mx-auto py-4 md:py-8 px-4">
       <div className={`flex ${isMobile ? 'flex-col gap-4' : 'gap-8'}`}>
@@ -79,6 +82,11 @@ const Article = () => {
                 {article.excerpt}
               </div>
             )}
+            <SocialShare
+              url={currentUrl}
+              title={article.title}
+              imageUrl={article.featured_image || ''}
+            />
           </div>
         </div>
         {!isMobile && (
