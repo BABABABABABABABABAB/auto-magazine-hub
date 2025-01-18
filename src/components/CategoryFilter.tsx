@@ -161,7 +161,7 @@ export const CategoryFilter = ({
                       (category === "Tout" && !selectedCategory) || selectedCategory === category
                         ? "text-magazine-red"
                         : "text-gray-800"
-                    } hover:bg-gray-50`}
+                    } ${subcategories[category]?.length ? "cursor-pointer" : ""}`}
                   >
                     <span className="font-medium">{category}</span>
                     {category !== "Tout" && subcategories[category]?.length > 0 && (
