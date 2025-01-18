@@ -39,14 +39,14 @@ export const SocialShare = ({ url, title, imageUrl }: SocialShareProps) => {
   ];
 
   return (
-    <div className="flex gap-2 items-center">
-      <span className="text-sm font-medium text-gray-700">Partager :</span>
-      <div className="flex gap-2">
+    <div className="flex gap-2 items-center bg-magazine-red rounded-full px-4 py-1">
+      <div className="flex gap-1">
         {shareLinks.map((social) => (
           <Button
             key={social.name}
-            variant="outline"
+            variant="ghost"
             size="icon"
+            className="h-8 w-8 text-white hover:text-white hover:bg-magazine-red/80"
             onClick={() => {
               if (social.onClick) {
                 social.onClick();
