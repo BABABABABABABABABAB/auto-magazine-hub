@@ -34,7 +34,7 @@ export const ArticleCard = ({
           <img
             src={imageUrl}
             alt={title}
-            className={`w-full object-cover rounded-t-lg ${isCompact ? 'aspect-square' : 'h-48'}`}
+            className={`w-full object-cover rounded-t-lg ${isCompact ? 'h-32' : 'h-48'}`}
           />
         </CardHeader>
         <CardContent className={`p-4 ${isCompact ? 'space-y-1' : 'space-y-2'}`}>
