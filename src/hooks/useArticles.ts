@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 
-const ARTICLES_PER_PAGE = 12;
+const ARTICLES_PER_PAGE = 16;
 
 export const useArticles = (
   selectedCategory: string | null,
