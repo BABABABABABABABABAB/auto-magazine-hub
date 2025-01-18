@@ -31,9 +31,9 @@ const Admin = () => {
           <Outlet />
         ) : (
           <ScrollArea className="h-[calc(100vh-5rem)] rounded-lg border bg-white shadow-sm">
-            <div className="p-4 sm:p-6">
+            <div className="p-6 sm:p-8">
               <Tabs defaultValue="articles" className="w-full">
-                <TabsList className="mb-8 flex flex-wrap gap-2">
+                <TabsList className="mb-12 flex flex-wrap gap-3">
                   <TabsTrigger value="articles" className="text-lg">Articles</TabsTrigger>
                   <TabsTrigger value="categories" className="text-lg">Catégories</TabsTrigger>
                   <TabsTrigger value="subcategories" className="text-lg">Sous-catégories</TabsTrigger>
@@ -41,41 +41,41 @@ const Admin = () => {
                   <TabsTrigger value="vertical-banner" className="text-lg">Bannière Verticale</TabsTrigger>
                 </TabsList>
                 
-                <TabsContent value="articles" className="mt-8">
-                  <div className="flex justify-between items-center mb-8">
+                <TabsContent value="articles" className="mt-10">
+                  <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10">
                     <h2 className="text-2xl font-bold">Articles</h2>
-                    <Button className="bg-magazine-red text-white hover:bg-magazine-red/90" asChild>
+                    <Button className="bg-magazine-red text-white hover:bg-magazine-red/90 w-full sm:w-auto" asChild>
                       <Link to="/admin/nouvel-article">Nouvel Article</Link>
                     </Button>
                   </div>
                   <ArticlesManager />
                 </TabsContent>
                 
-                <TabsContent value="categories" className="mt-8">
-                  <div className="grid grid-cols-1 gap-12">
-                    <div className="space-y-6">
-                      <h2 className="text-2xl font-bold mb-6">Catégories</h2>
+                <TabsContent value="categories" className="mt-10">
+                  <div className="grid grid-cols-1 xl:grid-cols-2 gap-16">
+                    <div className="space-y-8">
+                      <h2 className="text-2xl font-bold mb-8">Catégories</h2>
                       <CategoriesManager />
                     </div>
-                    <div className="space-y-6">
-                      <h2 className="text-2xl font-bold mb-6">Sous-catégories</h2>
+                    <div className="space-y-8">
+                      <h2 className="text-2xl font-bold mb-8">Sous-catégories</h2>
                       <SubcategoriesManager />
                     </div>
                   </div>
                 </TabsContent>
                 
-                <TabsContent value="subcategories" className="mt-8">
-                  <h2 className="text-2xl font-bold mb-6">Sous-catégories</h2>
+                <TabsContent value="subcategories" className="mt-10">
+                  <h2 className="text-2xl font-bold mb-8">Sous-catégories</h2>
                   <SubcategoriesManager />
                 </TabsContent>
 
-                <TabsContent value="banner" className="mt-8">
-                  <h2 className="text-2xl font-bold mb-6">Bannière</h2>
+                <TabsContent value="banner" className="mt-10">
+                  <h2 className="text-2xl font-bold mb-8">Bannière</h2>
                   <BannerManager />
                 </TabsContent>
 
-                <TabsContent value="vertical-banner" className="mt-8">
-                  <h2 className="text-2xl font-bold mb-6">Bannière Verticale</h2>
+                <TabsContent value="vertical-banner" className="mt-10">
+                  <h2 className="text-2xl font-bold mb-8">Bannière Verticale</h2>
                   <VerticalBannerManager />
                 </TabsContent>
               </Tabs>
