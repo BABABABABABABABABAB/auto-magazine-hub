@@ -17,6 +17,7 @@ serve(async (req) => {
       throw new Error('OpenAI API key is not configured')
     }
 
+    console.log('Starting article generation process...')
     const { url } = await req.json()
     if (!url) {
       throw new Error('URL is required')
@@ -32,6 +33,7 @@ serve(async (req) => {
       .slice(0, 3000)
 
     console.log('Extracted text content length:', textContent.length)
+    console.log('Making request to OpenAI API...')
 
     const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -67,7 +69,7 @@ serve(async (req) => {
     }
 
     const data = await openAIResponse.json()
-    console.log('OpenAI response received:', data)
+    console.log('OpenAI response received')
 
     if (!data.choices?.[0]?.message?.content) {
       throw new Error('Invalid response format from OpenAI')
