@@ -9,6 +9,7 @@ import { SEOSection } from "./article-form/SEOSection";
 import { PublishSection } from "./article-form/PublishSection";
 import { ArticleFormData } from "./article-form/types";
 import { useNavigate } from "react-router-dom";
+import imageCompression from "browser-image-compression";
 
 interface ArticleFormProps {
   initialData?: ArticleFormData;
@@ -26,18 +27,37 @@ export const ArticleForm = ({ initialData }: ArticleFormProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
+  const compressImage = async (file: File): Promise<File> => {
+    const options = {
+      maxSizeMB: 0.08, // 80kb = 0.08MB
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+      fileType: 'image/webp', // Convert to WebP format
+    };
+
+    try {
+      return await imageCompression(file, options);
+    } catch (error) {
+      console.error("Error compressing image:", error);
+      throw error;
+    }
+  };
+
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     setUploading(true);
     try {
-      const fileExt = file.name.split('.').pop();
+      // Compress and convert the image
+      const compressedFile = await compressImage(file);
+      
+      const fileExt = 'webp'; // Always use WebP extension
       const filePath = `${crypto.randomUUID()}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage
         .from('ui_images')
-        .upload(filePath, file);
+        .upload(filePath, compressedFile);
 
       if (uploadError) {
         throw uploadError;

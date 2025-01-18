@@ -7,6 +7,7 @@ import { ImageUrlInput } from "./banner/ImageUrlInput";
 import { ImagePreview } from "./banner/ImagePreview";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import imageCompression from "browser-image-compression";
 
 export const VerticalBannerManager = () => {
   const [imageUrl, setImageUrl] = useState("");
@@ -44,6 +45,22 @@ export const VerticalBannerManager = () => {
     }
   };
 
+  const compressImage = async (file: File): Promise<File> => {
+    const options = {
+      maxSizeMB: 0.08, // 80kb = 0.08MB
+      maxWidthOrHeight: 1920,
+      useWebWorker: true,
+      fileType: 'image/webp', // Convert to WebP format
+    };
+
+    try {
+      return await imageCompression(file, options);
+    } catch (error) {
+      console.error("Error compressing image:", error);
+      throw error;
+    }
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setFile(e.target.files[0]);
@@ -51,13 +68,14 @@ export const VerticalBannerManager = () => {
   };
 
   const uploadImage = async (file: File) => {
-    const fileExt = file.name.split('.').pop();
+    const compressedFile = await compressImage(file);
+    const fileExt = 'webp'; // Always use WebP extension
     const fileName = `${Math.random()}.${fileExt}`;
     const filePath = `vertical-banners/${fileName}`;
 
     const { error: uploadError, data } = await supabase.storage
       .from('ui_images')
-      .upload(filePath, file);
+      .upload(filePath, compressedFile);
 
     if (uploadError) {
       throw new Error('Erreur lors du téléchargement de l\'image');
