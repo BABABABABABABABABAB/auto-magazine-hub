@@ -68,9 +68,7 @@ export const CategoryFilter = ({
 
   const handleCategoryClick = (category: string | null) => {
     onSelectCategory(category);
-    if (!subcategories[category as string]?.length) {
-      setIsMobileMenuOpen(false);
-    }
+    setIsMobileMenuOpen(false);
   };
 
   const allCategories = ["Tout", ...categories];
