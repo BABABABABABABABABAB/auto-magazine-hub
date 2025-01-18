@@ -73,6 +73,7 @@ export const MainContent = ({ selectedCategory, articles }: MainContentProps) =>
               imageUrl={article.imageUrl}
               category={article.category}
               subcategory={article.subcategory}
+              isCompact={true}
             />
           ))}
         </div>

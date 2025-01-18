@@ -10,9 +10,18 @@ interface ArticleCardProps {
   category: string;
   subcategory: string;
   createdAt?: string;
+  isCompact?: boolean;
 }
 
-export const ArticleCard = ({ id, title, imageUrl, category, subcategory, createdAt }: ArticleCardProps) => {
+export const ArticleCard = ({ 
+  id, 
+  title, 
+  imageUrl, 
+  category, 
+  subcategory, 
+  createdAt,
+  isCompact = false 
+}: ArticleCardProps) => {
   const [searchParams] = useSearchParams();
   const categoryParam = searchParams.get("category");
   
@@ -25,20 +34,20 @@ export const ArticleCard = ({ id, title, imageUrl, category, subcategory, create
           <img
             src={imageUrl}
             alt={title}
-            className="w-full h-48 object-cover rounded-t-lg"
+            className={`w-full object-cover rounded-t-lg ${isCompact ? 'h-32' : 'h-48'}`}
           />
         </CardHeader>
-        <CardContent className="p-4">
-          <div className="text-magazine-red text-sm font-medium mb-2 flex gap-2">
+        <CardContent className={`p-4 ${isCompact ? 'space-y-1' : 'space-y-2'}`}>
+          <div className="text-magazine-red text-sm font-medium flex gap-2">
             <span>{category}</span>
             <span>•</span>
             <span>{subcategory}</span>
           </div>
-          <h3 className="font-roboto font-bold text-lg text-magazine-black mb-2">
+          <h3 className={`font-roboto font-bold text-magazine-black ${isCompact ? 'text-sm line-clamp-2' : 'text-lg'}`}>
             {title}
           </h3>
           {createdAt && (
-            <p className="text-base text-magazine-black font-medium">
+            <p className={`text-magazine-black font-medium ${isCompact ? 'text-sm' : 'text-base'}`}>
               {format(new Date(createdAt), "d MMMM yyyy", { locale: fr })}
             </p>
           )}
