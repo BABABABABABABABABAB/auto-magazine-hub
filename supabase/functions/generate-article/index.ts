@@ -23,19 +23,16 @@ serve(async (req) => {
     }
 
     console.log('Fetching content from URL:', url)
-    // Fetch content from URL
     const response = await fetch(url)
     const htmlContent = await response.text()
 
-    // Extract text content (basic implementation)
     const textContent = htmlContent.replace(/<[^>]*>/g, ' ')
       .replace(/\s+/g, ' ')
       .trim()
-      .slice(0, 3000) // Limit content length
+      .slice(0, 3000)
 
     console.log('Extracted text content length:', textContent.length)
 
-    // Generate article using OpenAI
     const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -72,7 +69,7 @@ serve(async (req) => {
     const data = await openAIResponse.json()
     console.log('OpenAI response received:', data)
 
-    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+    if (!data.choices?.[0]?.message?.content) {
       throw new Error('Invalid response format from OpenAI')
     }
 
