@@ -25,15 +25,15 @@ export const ContentSection = ({
   handleImageUpload,
   uploading,
 }: ContentSectionProps) => {
-  const [sourceUrl, setSourceUrl] = useState("");
   const [generating, setGenerating] = useState(false);
   const { toast } = useToast();
 
-  const handleGenerate = async () => {
-    if (!sourceUrl) {
+  const handleRegenerate = async () => {
+    const content = watch("content");
+    if (!content) {
       toast({
         title: "Erreur",
-        description: "Veuillez entrer une URL",
+        description: "Veuillez d'abord ajouter du contenu à régénérer",
         variant: "destructive",
       });
       return;
@@ -42,26 +42,22 @@ export const ContentSection = ({
     setGenerating(true);
     try {
       const { data, error } = await supabase.functions.invoke('generate-article', {
-        body: { url: sourceUrl }
+        body: { content }
       });
 
       if (error) throw error;
       
-      setValue("title", data.title);
       setValue("content", data.content);
-      setValue("excerpt", data.excerpt);
-      setValue("meta_title", data.meta_title);
-      setValue("meta_description", data.meta_description);
 
       toast({
         title: "Succès",
-        description: "Article généré avec succès",
+        description: "Contenu régénéré avec succès",
       });
     } catch (error) {
-      console.error('Error generating article:', error);
+      console.error('Error regenerating content:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de générer l'article",
+        description: "Impossible de régénérer le contenu",
         variant: "destructive",
       });
     } finally {
@@ -76,26 +72,6 @@ export const ContentSection = ({
           <CardTitle>Contenu de l'article</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex gap-4 items-end">
-            <div className="flex-1 space-y-2">
-              <Label htmlFor="source_url">URL source (optionnel)</Label>
-              <Input
-                id="source_url"
-                value={sourceUrl}
-                onChange={(e) => setSourceUrl(e.target.value)}
-                placeholder="https://example.com/article"
-              />
-            </div>
-            <Button
-              type="button"
-              onClick={handleGenerate}
-              disabled={generating}
-              className="bg-magazine-red hover:bg-red-600"
-            >
-              {generating ? "Génération..." : "Générer"}
-            </Button>
-          </div>
-
           <div className="space-y-2">
             <Label htmlFor="title">Titre</Label>
             <Input id="title" {...register("title")} required />
@@ -112,7 +88,18 @@ export const ContentSection = ({
           </div>
 
           <div className="space-y-2">
-            <Label>Contenu</Label>
+            <div className="flex justify-between items-center">
+              <Label>Contenu</Label>
+              <Button
+                type="button"
+                onClick={handleRegenerate}
+                disabled={generating}
+                variant="outline"
+                size="sm"
+              >
+                {generating ? "Régénération..." : "Régénérer le contenu"}
+              </Button>
+            </div>
             <div className="border rounded-lg overflow-hidden">
               <RichTextEditor
                 value={watch("content") || ""}

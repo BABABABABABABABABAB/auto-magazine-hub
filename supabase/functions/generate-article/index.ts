@@ -17,38 +17,13 @@ serve(async (req) => {
       throw new Error('OpenAI API key is not configured')
     }
 
-    console.log('Starting article generation process...')
-    const { url } = await req.json()
-    if (!url) {
-      throw new Error('URL is required')
+    console.log('Starting content regeneration process...')
+    const { content } = await req.json()
+    if (!content) {
+      throw new Error('Content is required')
     }
 
-    console.log('Fetching content from URL:', url)
-    const response = await fetch(url)
-    const htmlContent = await response.text()
-
-    // Extract title from h1 tags
-    const h1Match = htmlContent.match(/<h1[^>]*>(.*?)<\/h1>/i)
-    const title = h1Match ? h1Match[1].trim() : ''
-
-    // Extract paragraphs
-    const paragraphs = htmlContent.match(/<p[^>]*>(.*?)<\/p>/gi)
-    const cleanParagraphs = paragraphs 
-      ? paragraphs
-          .map(p => p.replace(/<[^>]*>/g, '').trim())
-          .filter(p => p.length > 0)
-          .join('\n\n')
-      : ''
-
-    const textContent = `
-Title: ${title}
-
-Content:
-${cleanParagraphs}
-    `.trim()
-
-    console.log('Extracted title:', title)
-    console.log('Content length:', cleanParagraphs.length)
+    console.log('Content length:', content.length)
     console.log('Making request to OpenAI API...')
 
     const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -62,17 +37,11 @@ ${cleanParagraphs}
         messages: [
           {
             role: 'system',
-            content: 'Tu es un rédacteur expert qui génère des articles en français. Génère un article bien structuré basé sur le contenu fourni.'
+            content: 'Tu es un rédacteur expert qui reformule du contenu en français. Ton but est de réécrire le contenu fourni d\'une manière plus naturelle et engageante, tout en conservant les informations importantes.'
           },
           {
             role: 'user',
-            content: `Génère un article basé sur ce contenu: ${textContent}\n\nFormat souhaité:\n{
-              "title": "Titre de l'article",
-              "content": "Contenu de l'article en HTML avec des balises <p>, <h2>, etc.",
-              "excerpt": "Bref résumé de l'article",
-              "meta_title": "Titre SEO",
-              "meta_description": "Description SEO"
-            }`
+            content: `Réécris ce contenu d'une façon plus naturelle et engageante, en gardant le même sens mais en utilisant un style plus humain: ${content}`
           }
         ],
       }),
@@ -91,9 +60,7 @@ ${cleanParagraphs}
       throw new Error('Invalid response format from OpenAI')
     }
 
-    const generatedContent = JSON.parse(data.choices[0].message.content)
-
-    return new Response(JSON.stringify(generatedContent), {
+    return new Response(JSON.stringify({ content: data.choices[0].message.content }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
   } catch (error) {
