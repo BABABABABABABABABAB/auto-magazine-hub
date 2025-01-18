@@ -19,6 +19,7 @@ export const useArticles = (
       try {
         setIsLoading(true);
         console.log("Fetching articles with category:", selectedCategory);
+        console.log("Selected subcategory ID:", selectedSubcategoryId);
 
         // Base query
         let query = supabase
@@ -37,14 +38,13 @@ export const useArticles = (
           `)
           .eq("hidden", false);
 
-        // Add category filter if selected
-        if (selectedCategory && selectedCategory !== "Tout") {
-          query = query.eq("subcategories.categories.name", selectedCategory);
-        }
-
-        // Add subcategory filter if selected
+        // Si une sous-catégorie est sélectionnée, on filtre par celle-ci
         if (selectedSubcategoryId) {
           query = query.eq("subcategory_id", selectedSubcategoryId);
+        }
+        // Sinon, si une catégorie est sélectionnée, on filtre par catégorie
+        else if (selectedCategory && selectedCategory !== "Tout") {
+          query = query.eq("subcategories.categories.name", selectedCategory);
         }
 
         // Calculate pagination range
