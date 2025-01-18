@@ -23,7 +23,7 @@ export const VerticalBanner = () => {
       <img
         src={banner.image_url}
         alt="Banner"
-        className="w-full h-full object-cover"
+        className="w-full h-full object-cover rounded-lg"
       />
     </div>
   );

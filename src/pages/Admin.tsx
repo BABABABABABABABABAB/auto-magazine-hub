@@ -2,7 +2,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArticlesManager } from "@/components/admin/ArticlesManager";
 import { CategoriesManager } from "@/components/admin/CategoriesManager";
 import { SubcategoriesManager } from "@/components/admin/SubcategoriesManager";
-import { BannerManager } from "@/components/admin/BannerManager";
+import { VerticalBannerManager } from "@/components/admin/vertical-banner/VerticalBannerManager";
 import { Button } from "@/components/ui/button";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -36,16 +36,10 @@ const Admin = () => {
                   <TabsTrigger value="articles" className="text-lg">Articles</TabsTrigger>
                   <TabsTrigger value="categories" className="text-lg">Catégories</TabsTrigger>
                   <TabsTrigger value="subcategories" className="text-lg">Sous-catégories</TabsTrigger>
-                  <TabsTrigger value="banner" className="text-lg">Bannière</TabsTrigger>
+                  <TabsTrigger value="vertical-banner" className="text-lg">Bannière Verticale</TabsTrigger>
                 </TabsList>
                 
                 <TabsContent value="articles" className="mt-6">
-                  <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-bold">Articles</h2>
-                    <Button className="bg-white text-magazine-red hover:bg-gray-100" asChild>
-                      <Link to="/admin/nouvel-article">Nouvel Article</Link>
-                    </Button>
-                  </div>
                   <ArticlesManager />
                 </TabsContent>
                 
@@ -57,8 +51,8 @@ const Admin = () => {
                   <SubcategoriesManager />
                 </TabsContent>
 
-                <TabsContent value="banner" className="mt-6">
-                  <BannerManager />
+                <TabsContent value="vertical-banner" className="mt-6">
+                  <VerticalBannerManager />
                 </TabsContent>
               </Tabs>
             </div>
@@ -67,6 +61,6 @@ const Admin = () => {
       </main>
     </div>
   );
-};
+}
 
 export default Admin;
