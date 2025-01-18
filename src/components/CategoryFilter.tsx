@@ -73,26 +73,26 @@ export const CategoryFilter = ({
       {/* Desktop Navigation */}
       <nav className="hidden md:block bg-magazine-black text-white">
         <div className="container mx-auto px-4">
-          <ul className="flex items-center space-x-6 h-12">
+          <ul className="flex items-center h-12">
             {allCategories.map((category) => (
               <li key={category} className="relative group">
                 <button
                   onClick={() => onSelectCategory(category === "Tout" ? null : category)}
-                  className={`text-sm font-medium hover:text-magazine-red transition-colors flex items-center gap-1 ${
+                  className={`text-sm font-medium px-4 transition-colors flex items-center gap-1 h-12 ${
                     (category === "Tout" && !selectedCategory) || selectedCategory === category
                       ? "text-magazine-red"
-                      : "text-white"
+                      : "text-white hover:text-magazine-red"
                   }`}
                 >
                   {category}
                   {category !== "Tout" && subcategories[category]?.length > 0 && (
-                    <ChevronDown className="h-4 w-4" />
+                    <ChevronDown className="h-3 w-3" />
                   )}
                 </button>
                 
                 {category !== "Tout" && subcategories[category]?.length > 0 && (
-                  <div className="absolute left-0 top-full pt-2 hidden group-hover:block z-50">
-                    <div className="bg-white rounded-md shadow-lg min-w-[200px] py-2">
+                  <div className="absolute left-0 top-full pt-1 hidden group-hover:block z-50">
+                    <div className="bg-white rounded-md shadow-lg min-w-[200px] py-1">
                       {subcategories[category].map((subcategory) => (
                         <button
                           key={subcategory.id}
