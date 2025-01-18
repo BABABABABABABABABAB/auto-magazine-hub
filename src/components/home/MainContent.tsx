@@ -34,7 +34,7 @@ export const MainContent = ({ selectedCategory, articles }: MainContentProps) =>
       <Separator className="bg-magazine-red h-1" />
       
       {/* Top 3 articles - Responsive grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
         {topArticles.map((article) => (
           <ArticleCard
             key={article.id}
@@ -61,9 +61,9 @@ export const MainContent = ({ selectedCategory, articles }: MainContentProps) =>
       )}
 
       {/* Main content grid - Responsive */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
         {/* Left grid - 6 articles in a more compact layout */}
-        <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="sm:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
           {leftGridArticles.map((article) => (
             <ArticleCard
               key={article.id}
@@ -78,7 +78,7 @@ export const MainContent = ({ selectedCategory, articles }: MainContentProps) =>
         </div>
 
         {/* Right column - 2 larger articles */}
-        <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4">
+        <div className="sm:col-span-2 grid grid-cols-1 sm:grid-cols-1 gap-4 h-full">
           {rightArticles.map((article) => (
             <div key={article.id} className="h-full">
               <ArticleCard
@@ -95,7 +95,7 @@ export const MainContent = ({ selectedCategory, articles }: MainContentProps) =>
       </div>
 
       {/* Bottom 3 articles - Responsive grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
         {bottomArticles.map((article) => (
           <ArticleCard
             key={article.id}
