@@ -71,21 +71,19 @@ const Article = () => {
             className="w-full h-48 md:h-96 object-cover rounded-lg"
           />
           <div className="space-y-3 md:space-y-4 mt-4">
-            <div className="text-magazine-red text-sm font-medium">
-              {article.subcategories?.categories?.name}
-            </div>
-            <div className="flex justify-between items-start gap-4">
-              <h1 className="text-2xl md:text-4xl font-bold font-roboto text-magazine-black">
-                {article.title}
-              </h1>
-              <div className="shrink-0">
-                <SocialShare
-                  url={currentUrl}
-                  title={article.title}
-                  imageUrl={article.featured_image || ''}
-                />
+            <div className="flex items-center justify-between">
+              <div className="text-magazine-red text-sm font-medium">
+                {article.subcategories?.categories?.name}
               </div>
+              <SocialShare
+                url={currentUrl}
+                title={article.title}
+                imageUrl={article.featured_image || ''}
+              />
             </div>
+            <h1 className="text-2xl md:text-4xl font-bold font-roboto text-magazine-black">
+              {article.title}
+            </h1>
             {article.excerpt && (
               <div className="text-lg md:text-xl text-gray-700 font-medium italic border-l-4 border-magazine-red pl-4">
                 {article.excerpt}
