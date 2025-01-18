@@ -58,13 +58,11 @@ export const useArticles = (
         }
 
         // Get total count for pagination
-        const { data: countData, error: countError } = await query.count();
-        
-        if (countError) {
-          throw countError;
-        }
+        const { count } = await supabase
+          .from("articles")
+          .select("*", { count: "exact", head: true });
 
-        const totalCount = countData?.[0]?.count || 0;
+        const totalCount = count || 0;
         setTotalPages(Math.ceil(totalCount / ARTICLES_PER_PAGE));
 
         console.log("Fetched articles:", data);
