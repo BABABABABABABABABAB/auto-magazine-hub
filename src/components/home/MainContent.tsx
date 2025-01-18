@@ -78,8 +78,8 @@ export const MainContent = ({ selectedCategory, articles }: MainContentProps) =>
           ))}
         </div>
 
-        {/* Right column - 2 articles */}
-        <div className="col-span-2 grid grid-cols-2 gap-4">
+        {/* Right column - 2 larger articles */}
+        <div className="col-span-2 grid grid-cols-1 gap-4">
           {rightArticles.map((article) => (
             <ArticleCard
               key={article.id}
