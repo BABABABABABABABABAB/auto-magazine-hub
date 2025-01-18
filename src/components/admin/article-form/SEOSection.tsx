@@ -1,19 +1,76 @@
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { UseFormRegister } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import { UseFormRegister, UseFormSetValue, UseFormWatch } from "react-hook-form";
 import { ArticleFormData } from "./types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 interface SEOSectionProps {
   register: UseFormRegister<ArticleFormData>;
+  setValue: UseFormSetValue<ArticleFormData>;
+  watch: UseFormWatch<ArticleFormData>;
 }
 
-export const SEOSection = ({ register }: SEOSectionProps) => {
+export const SEOSection = ({ register, setValue, watch }: SEOSectionProps) => {
+  const [generating, setGenerating] = useState(false);
+  const { toast } = useToast();
+
+  const handleGenerateSEO = async () => {
+    const content = watch("content");
+    const title = watch("title");
+
+    if (!content) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez d'abord ajouter du contenu à l'article",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setGenerating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-seo', {
+        body: { content, title }
+      });
+
+      if (error) throw error;
+      
+      setValue("meta_title", data.metaTitle);
+      setValue("meta_description", data.metaDescription);
+
+      toast({
+        title: "Succès",
+        description: "Métadonnées SEO générées avec succès",
+      });
+    } catch (error) {
+      console.error('Error generating SEO:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de générer les métadonnées SEO",
+        variant: "destructive",
+      });
+    } finally {
+      setGenerating(false);
+    }
+  };
+
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle>SEO</CardTitle>
+        <Button 
+          onClick={handleGenerateSEO}
+          disabled={generating}
+          variant="outline"
+          size="sm"
+        >
+          {generating ? "Génération..." : "Générer SEO"}
+        </Button>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">

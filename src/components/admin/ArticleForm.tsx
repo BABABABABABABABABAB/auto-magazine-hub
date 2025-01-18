@@ -101,7 +101,7 @@ export const ArticleForm = ({ initialData }: ArticleFormProps) => {
 
         <div className="space-y-8">
           <CategorySection setValue={setValue} />
-          <SEOSection register={register} />
+          <SEOSection register={register} setValue={setValue} watch={watch} />
           <PublishSection watch={watch} setValue={setValue} />
         </div>
       </div>
