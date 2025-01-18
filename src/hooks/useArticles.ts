@@ -21,7 +21,6 @@ export const useArticles = (
         console.log("Fetching articles with category:", selectedCategory);
         console.log("Selected subcategory ID:", selectedSubcategoryId);
 
-        // Base query
         let query = supabase
           .from("articles")
           .select(`
@@ -29,7 +28,6 @@ export const useArticles = (
             subcategories!inner (
               id,
               name,
-              category_id,
               categories!inner (
                 id,
                 name
@@ -38,7 +36,7 @@ export const useArticles = (
           `)
           .eq("hidden", false);
 
-        // Si une sous-catégorie est sélectionnée, on filtre par celle-ci
+        // Si une sous-catégorie est sélectionnée, on filtre uniquement par celle-ci
         if (selectedSubcategoryId) {
           query = query.eq("subcategory_id", selectedSubcategoryId);
         }
@@ -51,7 +49,7 @@ export const useArticles = (
         const start = (currentPage - 1) * ARTICLES_PER_PAGE;
         const end = start + ARTICLES_PER_PAGE - 1;
 
-        // Get paginated data
+        // Get total count for pagination
         const { data: countData } = await query;
         const totalCount = countData?.length || 0;
         setTotalPages(Math.ceil(totalCount / ARTICLES_PER_PAGE));
