@@ -13,9 +13,8 @@ const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(
     searchParams.get("category")
   );
-  const [selectedSubcategoryId, setSelectedSubcategoryId] = useState<string | null>(
-    null
-  );
+  const [selectedSubcategoryId, setSelectedSubcategoryId] = useState<string | null>(null);
+  const [selectedSubcategoryName, setSelectedSubcategoryName] = useState<string | null>(null);
   const [categories, setCategories] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const { toast } = useToast();
@@ -51,6 +50,7 @@ const Home = () => {
   const handleCategorySelect = (category: string | null) => {
     setSelectedCategory(category);
     setSelectedSubcategoryId(null);
+    setSelectedSubcategoryName(null);
     setCurrentPage(1);
     
     if (category) {
@@ -60,9 +60,20 @@ const Home = () => {
     }
   };
 
-  const handleSubcategorySelect = (subcategoryId: string) => {
+  const handleSubcategorySelect = async (subcategoryId: string) => {
     setSelectedSubcategoryId(subcategoryId);
     setCurrentPage(1);
+
+    // Fetch subcategory name
+    const { data, error } = await supabase
+      .from("subcategories")
+      .select("name")
+      .eq("id", subcategoryId)
+      .single();
+
+    if (!error && data) {
+      setSelectedSubcategoryName(data.name);
+    }
   };
 
   return (
@@ -99,6 +110,7 @@ const Home = () => {
           <MainContent
             selectedCategory={selectedCategory}
             articles={articles}
+            selectedSubcategoryName={selectedSubcategoryName}
           />
           {selectedCategory && (
             <div className="container mx-auto">
