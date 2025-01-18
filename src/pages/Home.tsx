@@ -109,8 +109,13 @@ const Home = () => {
           query = query.eq("subcategory_id", selectedSubcategoryId);
         }
 
-        // First get total count
-        const { count: totalCount, error: countError } = await query.count();
+        // Get total count
+        const { count: totalCount, error: countError } = await supabase
+          .from("articles")
+          .select('*', { count: 'exact', head: true })
+          .eq("hidden", false)
+          .eq(selectedCategory ? "subcategories.categories.name" : 'hidden', selectedCategory || false)
+          .eq(selectedSubcategoryId ? "subcategory_id" : 'hidden', selectedSubcategoryId || false);
 
         if (countError) {
           throw countError;
