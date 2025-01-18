@@ -127,10 +127,6 @@ export const BannerManager = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Bannière</h2>
-      </div>
-
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-4">
           <ImageUploadForm onFileChange={handleFileChange} />
