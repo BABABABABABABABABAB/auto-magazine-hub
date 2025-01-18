@@ -80,86 +80,88 @@ const Home = () => {
 
   useEffect(() => {
     const fetchArticles = async () => {
-      // First, get total count for pagination
-      let countQuery = supabase
-        .from("articles")
-        .select('id', { count: 'exact' })
-        .eq("hidden", false);
-
-      if (selectedCategory) {
-        countQuery = countQuery.eq("subcategories.categories.name", selectedCategory);
-      }
-
-      if (selectedSubcategoryId) {
-        countQuery = countQuery.eq("subcategory_id", selectedSubcategoryId);
-      }
-
-      const { count, error: countError } = await countQuery;
-
-      if (countError) {
-        toast({
-          title: "Erreur",
-          description: "Impossible de compter les articles",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      setTotalPages(Math.ceil((count || 0) / ARTICLES_PER_PAGE));
-
-      // Then fetch the articles for current page
-      let query = supabase
-        .from("articles")
-        .select(`
-          id,
-          title,
-          featured_image,
-          created_at,
-          subcategories!inner (
+      try {
+        let query = supabase
+          .from("articles")
+          .select(`
             id,
-            name,
-            categories!inner (
-              name
+            title,
+            featured_image,
+            created_at,
+            subcategories!inner (
+              id,
+              name,
+              categories!inner (
+                name
+              )
             )
-          )
-        `)
-        .eq("hidden", false)
-        .order("created_at", { ascending: false })
-        .range((currentPage - 1) * ARTICLES_PER_PAGE, currentPage * ARTICLES_PER_PAGE - 1);
+          `)
+          .eq("hidden", false)
+          .order("created_at", { ascending: false });
 
-      if (selectedCategory) {
-        query = query.eq("subcategories.categories.name", selectedCategory);
-      }
+        // Apply category filter if selected
+        if (selectedCategory) {
+          query = query.eq("subcategories.categories.name", selectedCategory);
+        }
 
-      if (selectedSubcategoryId) {
-        query = query.eq("subcategory_id", selectedSubcategoryId);
-      }
+        // Apply subcategory filter if selected
+        if (selectedSubcategoryId) {
+          query = query.eq("subcategory_id", selectedSubcategoryId);
+        }
 
-      const { data, error } = await query;
+        // First get total count
+        const { count: totalCount, error: countError } = await query.count();
 
-      if (error) {
+        if (countError) {
+          throw countError;
+        }
+
+        setTotalPages(Math.ceil((totalCount || 0) / ARTICLES_PER_PAGE));
+
+        // Then fetch paginated data
+        const start = (currentPage - 1) * ARTICLES_PER_PAGE;
+        const end = start + ARTICLES_PER_PAGE - 1;
+
+        const { data, error } = await query
+          .range(start, end);
+
+        if (error) {
+          throw error;
+        }
+
+        const formattedArticles = data.map(article => ({
+          id: article.id,
+          title: article.title,
+          imageUrl: article.featured_image || "/placeholder.svg",
+          category: article.subcategories?.categories?.name || "Non catégorisé",
+          subcategory: article.subcategories?.name || "Non catégorisé",
+          createdAt: article.created_at
+        }));
+
+        setArticles(formattedArticles);
+      } catch (error) {
+        console.error("Error fetching articles:", error);
         toast({
           title: "Erreur",
           description: "Impossible de charger les articles",
           variant: "destructive",
         });
-        return;
       }
-
-      const formattedArticles = data.map(article => ({
-        id: article.id,
-        title: article.title,
-        imageUrl: article.featured_image || "/placeholder.svg",
-        category: article.subcategories?.categories?.name || "Non catégorisé",
-        subcategory: article.subcategories?.name || "Non catégorisé",
-        createdAt: article.created_at
-      }));
-
-      setArticles(formattedArticles);
     };
 
     fetchArticles();
   }, [selectedCategory, selectedSubcategoryId, currentPage, toast]);
+
+  const handleCategorySelect = (category: string | null) => {
+    setSelectedCategory(category);
+    setSelectedSubcategoryId(null);
+    setCurrentPage(1);
+  };
+
+  const handleSubcategorySelect = (subcategoryId: string) => {
+    setSelectedSubcategoryId(subcategoryId);
+    setCurrentPage(1);
+  };
 
   return (
     <div className="min-h-screen bg-[#222222] text-white">
@@ -178,11 +180,8 @@ const Home = () => {
           <CategoryFilter
             categories={categories}
             selectedCategory={selectedCategory}
-            onSelectCategory={setSelectedCategory}
-            onSelectSubcategory={(subcategoryId) => {
-              setSelectedSubcategoryId(subcategoryId);
-              setCurrentPage(1);
-            }}
+            onSelectCategory={handleCategorySelect}
+            onSelectSubcategory={handleSubcategorySelect}
           />
         </div>
       </nav>
@@ -211,7 +210,11 @@ const Home = () => {
 
       {/* Recent Articles Title and Separator */}
       <div className="container mx-auto mt-8">
-        <h2 className="text-2xl font-bold text-white text-left mb-4">Articles récents</h2>
+        <h2 className="text-2xl font-bold text-white text-left mb-4">
+          {selectedCategory 
+            ? `Articles dans la catégorie "${selectedCategory}"`
+            : "Articles récents"}
+        </h2>
         <Separator className="bg-magazine-red h-1" />
       </div>
 
