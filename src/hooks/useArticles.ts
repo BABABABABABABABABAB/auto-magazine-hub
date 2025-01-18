@@ -58,8 +58,9 @@ export const useArticles = (
         }
 
         // Get total count for pagination
-        const { count } = await query.count();
-        setTotalPages(Math.ceil((count || 0) / ARTICLES_PER_PAGE));
+        const countResult = await query.count().single();
+        const totalCount = countResult?.count || 0;
+        setTotalPages(Math.ceil(totalCount / ARTICLES_PER_PAGE));
 
         console.log("Fetched articles:", data);
 
