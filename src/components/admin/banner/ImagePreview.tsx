@@ -1,23 +1,22 @@
 interface ImagePreviewProps {
-  imageUrl: string;
-  file: File | null;
+  imageUrl?: string;
+  file?: File | null;
 }
 
 export const ImagePreview = ({ imageUrl, file }: ImagePreviewProps) => {
-  const previewUrl = file ? URL.createObjectURL(file) : imageUrl;
+  if (!imageUrl && !file) return null;
 
-  return previewUrl ? (
-    <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-700">
-        Aperçu
-      </label>
-      <div className="w-full h-[200px] border border-gray-300 rounded-md overflow-hidden">
-        <img
-          src={previewUrl}
-          alt="Preview"
-          className="w-full h-full object-cover"
-        />
-      </div>
+  return (
+    <div className="mt-4">
+      <h3 className="text-sm font-medium mb-2">Aperçu</h3>
+      <div 
+        className="w-full h-[200px] bg-cover bg-center rounded-lg border"
+        style={{ 
+          backgroundImage: file 
+            ? `url(${URL.createObjectURL(file)})` 
+            : `url(${imageUrl})`
+        }}
+      />
     </div>
-  ) : null;
+  );
 };

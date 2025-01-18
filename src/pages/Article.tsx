@@ -2,7 +2,6 @@ import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { VerticalBanner } from "@/components/VerticalBanner";
 
 const Article = () => {
   const { id } = useParams<{ id: string }>();
@@ -57,8 +56,8 @@ const Article = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto py-8 px-4 grid grid-cols-1 lg:grid-cols-4 gap-8">
-      <div className="lg:col-span-3 space-y-8">
+    <div className="max-w-4xl mx-auto py-8 px-4">
+      <div className="space-y-8">
         <img
           src={article.featured_image}
           alt={article.title}
@@ -76,9 +75,6 @@ const Article = () => {
             dangerouslySetInnerHTML={{ __html: article.content }}
           />
         </div>
-      </div>
-      <div className="lg:col-span-1">
-        <VerticalBanner />
       </div>
     </div>
   );
