@@ -81,6 +81,7 @@ const Home = () => {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
+        // Base query with joins
         let query = supabase
           .from("articles")
           .select(`
@@ -96,8 +97,7 @@ const Home = () => {
               )
             )
           `)
-          .eq("hidden", false)
-          .order("created_at", { ascending: false });
+          .eq("hidden", false);
 
         // Apply category filter if selected
         if (selectedCategory) {
@@ -109,26 +109,34 @@ const Home = () => {
           query = query.eq("subcategory_id", selectedSubcategoryId);
         }
 
-        // Get total count
-        const { count: totalCount, error: countError } = await supabase
+        // Get total count with the same conditions
+        const countQuery = supabase
           .from("articles")
           .select('*', { count: 'exact', head: true })
-          .eq("hidden", false)
-          .eq(selectedCategory ? "subcategories.categories.name" : 'hidden', selectedCategory || false)
-          .eq(selectedSubcategoryId ? "subcategory_id" : 'hidden', selectedSubcategoryId || false);
+          .eq("hidden", false);
+
+        if (selectedCategory) {
+          countQuery.eq("subcategories.categories.name", selectedCategory);
+        }
+        if (selectedSubcategoryId) {
+          countQuery.eq("subcategory_id", selectedSubcategoryId);
+        }
+
+        const { count, error: countError } = await countQuery;
 
         if (countError) {
           throw countError;
         }
 
-        setTotalPages(Math.ceil((totalCount || 0) / ARTICLES_PER_PAGE));
+        setTotalPages(Math.ceil((count || 0) / ARTICLES_PER_PAGE));
 
         // Then fetch paginated data
         const start = (currentPage - 1) * ARTICLES_PER_PAGE;
         const end = start + ARTICLES_PER_PAGE - 1;
 
         const { data, error } = await query
-          .range(start, end);
+          .range(start, end)
+          .order('created_at', { ascending: false });
 
         if (error) {
           throw error;
