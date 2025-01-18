@@ -20,15 +20,16 @@ export const useArticles = (
         setIsLoading(true);
         console.log("Fetching articles with category:", selectedCategory);
 
-        // Base query for articles
+        // Base query for articles with subcategory and category information
         let query = supabase
           .from("articles")
           .select(`
             *,
-            subcategories (
+            subcategories!inner (
               id,
               name,
-              categories (
+              category_id,
+              categories!inner (
                 id,
                 name
               )
@@ -37,7 +38,7 @@ export const useArticles = (
           .eq("hidden", false);
 
         // Add category filter if selected
-        if (selectedCategory) {
+        if (selectedCategory && selectedCategory !== "Tout") {
           query = query.eq("subcategories.categories.name", selectedCategory);
         }
 
@@ -46,14 +47,23 @@ export const useArticles = (
           query = query.eq("subcategory_id", selectedSubcategoryId);
         }
 
-        // Get total count
-        const { count: totalCount } = await supabase
+        // Get total count for pagination
+        const countQuery = supabase
           .from("articles")
           .select("*", { count: "exact", head: true })
           .eq("hidden", false);
 
-        if (totalCount !== null) {
-          setTotalPages(Math.ceil(totalCount / ARTICLES_PER_PAGE));
+        if (selectedCategory && selectedCategory !== "Tout") {
+          countQuery.eq("subcategories.categories.name", selectedCategory);
+        }
+        if (selectedSubcategoryId) {
+          countQuery.eq("subcategory_id", selectedSubcategoryId);
+        }
+
+        const { count } = await countQuery;
+
+        if (count !== null) {
+          setTotalPages(Math.ceil(count / ARTICLES_PER_PAGE));
         }
 
         // Calculate pagination range
