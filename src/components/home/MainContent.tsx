@@ -79,16 +79,18 @@ export const MainContent = ({ selectedCategory, articles }: MainContentProps) =>
         </div>
 
         {/* Right column - 2 larger articles */}
-        <div className="col-span-2 grid grid-rows-2 gap-4 h-full">
-          {rightArticles.map((article) => (
-            <ArticleCard
-              key={article.id}
-              id={article.id}
-              title={article.title}
-              imageUrl={article.imageUrl}
-              category={article.category}
-              subcategory={article.subcategory}
-            />
+        <div className="col-span-2 h-full grid grid-rows-2 gap-4">
+          {rightArticles.map((article, index) => (
+            <div key={article.id} className="h-full">
+              <ArticleCard
+                id={article.id}
+                title={article.title}
+                imageUrl={article.imageUrl}
+                category={article.category}
+                subcategory={article.subcategory}
+                isCompact={false}
+              />
+            </div>
           ))}
         </div>
       </div>

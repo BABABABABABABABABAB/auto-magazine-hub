@@ -28,24 +28,26 @@ export const ArticleCard = ({
   const articleUrl = `/article/${id}${categoryParam ? `?category=${categoryParam}` : ''}`;
 
   return (
-    <Link to={articleUrl}>
-      <Card className="hover:shadow-lg transition-shadow duration-300">
-        <CardHeader className="p-0">
+    <Link to={articleUrl} className="h-full block">
+      <Card className="hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
+        <CardHeader className="p-0 flex-none">
           <img
             src={imageUrl}
             alt={title}
             className={`w-full object-cover rounded-t-lg ${isCompact ? 'h-32' : 'h-48'}`}
           />
         </CardHeader>
-        <CardContent className={`p-4 ${isCompact ? 'space-y-1' : 'space-y-2'}`}>
-          <div className="text-magazine-red text-sm font-medium flex gap-2">
-            <span>{category}</span>
-            <span>•</span>
-            <span>{subcategory}</span>
+        <CardContent className={`p-4 ${isCompact ? 'space-y-1' : 'space-y-2'} flex-grow flex flex-col justify-between`}>
+          <div>
+            <div className="text-magazine-red text-sm font-medium flex gap-2">
+              <span>{category}</span>
+              <span>•</span>
+              <span>{subcategory}</span>
+            </div>
+            <h3 className={`font-roboto font-bold text-magazine-black ${isCompact ? 'text-sm line-clamp-2' : 'text-lg'}`}>
+              {title}
+            </h3>
           </div>
-          <h3 className={`font-roboto font-bold text-magazine-black ${isCompact ? 'text-sm line-clamp-2' : 'text-lg'}`}>
-            {title}
-          </h3>
           {createdAt && (
             <p className={`text-magazine-black font-medium ${isCompact ? 'text-sm' : 'text-base'}`}>
               {format(new Date(createdAt), "d MMMM yyyy", { locale: fr })}
