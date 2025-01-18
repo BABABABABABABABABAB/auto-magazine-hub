@@ -86,51 +86,71 @@ export const CategoriesManager = () => {
 
   return (
     <div className="space-y-6">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <Input
-          placeholder="Nom de la catégorie"
-          value={newCategory.name}
-          onChange={(e) =>
-            setNewCategory({ ...newCategory, name: e.target.value })
-          }
-          required
-        />
-        <Input
-          placeholder="Slug"
-          value={newCategory.slug}
-          onChange={(e) =>
-            setNewCategory({ ...newCategory, slug: e.target.value })
-          }
-          required
-        />
-        <Button type="submit">Ajouter une catégorie</Button>
+      <form onSubmit={handleSubmit} className="grid gap-4">
+        <div className="grid gap-2">
+          <label htmlFor="categoryName" className="text-sm font-medium">
+            Nom de la catégorie
+          </label>
+          <Input
+            id="categoryName"
+            placeholder="Nom de la catégorie"
+            value={newCategory.name}
+            onChange={(e) =>
+              setNewCategory({ ...newCategory, name: e.target.value })
+            }
+            required
+            className="w-full"
+          />
+        </div>
+        <div className="grid gap-2">
+          <label htmlFor="categorySlug" className="text-sm font-medium">
+            Slug
+          </label>
+          <Input
+            id="categorySlug"
+            placeholder="Slug"
+            value={newCategory.slug}
+            onChange={(e) =>
+              setNewCategory({ ...newCategory, slug: e.target.value })
+            }
+            required
+            className="w-full"
+          />
+        </div>
+        <Button type="submit" className="w-full sm:w-auto">
+          Ajouter une catégorie
+        </Button>
       </form>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Nom</TableHead>
-            <TableHead>Slug</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {categories.map((category) => (
-            <TableRow key={category.id}>
-              <TableCell>{category.name}</TableCell>
-              <TableCell>{category.slug}</TableCell>
-              <TableCell>
-                <Button
-                  variant="destructive"
-                  onClick={() => handleDelete(category.id)}
-                >
-                  Supprimer
-                </Button>
-              </TableCell>
+      <div className="overflow-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Nom</TableHead>
+              <TableHead>Slug</TableHead>
+              <TableHead className="w-[100px]">Actions</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {categories.map((category) => (
+              <TableRow key={category.id}>
+                <TableCell className="font-medium">{category.name}</TableCell>
+                <TableCell>{category.slug}</TableCell>
+                <TableCell>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => handleDelete(category.id)}
+                    className="w-full sm:w-auto"
+                  >
+                    Supprimer
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 };
