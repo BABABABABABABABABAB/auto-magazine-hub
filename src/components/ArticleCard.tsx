@@ -34,7 +34,7 @@ export const ArticleCard = ({
           <img
             src={imageUrl}
             alt={title}
-            className={`w-full object-cover rounded-t-lg ${isCompact ? 'h-32' : 'h-48'}`}
+            className={`w-full object-cover rounded-t-lg ${isCompact ? 'h-32' : 'h-40'}`}
           />
         </CardHeader>
         <CardContent className={`p-4 ${isCompact ? 'space-y-1' : 'space-y-2'}`}>
@@ -43,7 +43,7 @@ export const ArticleCard = ({
             <span>•</span>
             <span>{subcategory}</span>
           </div>
-          <h3 className={`font-roboto font-bold text-magazine-black ${isCompact ? 'text-sm line-clamp-2' : 'text-lg'}`}>
+          <h3 className={`font-roboto font-bold text-magazine-black ${isCompact ? 'text-sm line-clamp-2' : 'text-base line-clamp-3'}`}>
             {title}
           </h3>
           {createdAt && (
