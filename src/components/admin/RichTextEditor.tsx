@@ -93,9 +93,12 @@ export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
   };
 
   const handleVoiceTranscript = (text: string) => {
+    console.log("Transcription reçue:", text); // Debug log
     setPrompt(text);
-    // Lancer automatiquement la génération après la transcription
-    handleGenerateFromPrompt();
+    if (text.trim()) {
+      console.log("Lancement de la génération..."); // Debug log
+      handleGenerateFromPrompt();
+    }
   };
 
   const handleRegenerate = async () => {

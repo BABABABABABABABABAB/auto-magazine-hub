@@ -23,6 +23,7 @@ export const VoiceRecognitionButton = ({ onTranscript }: VoiceRecognitionButtonP
 
         recognitionInstance.onresult = (event) => {
           const transcript = event.results[0][0].transcript;
+          console.log("Transcription terminée:", transcript); // Debug log
           onTranscript(transcript);
           setIsListening(false);
         };
@@ -38,6 +39,7 @@ export const VoiceRecognitionButton = ({ onTranscript }: VoiceRecognitionButtonP
         };
 
         recognitionInstance.onend = () => {
+          console.log("Reconnaissance vocale terminée"); // Debug log
           setIsListening(false);
         };
 
