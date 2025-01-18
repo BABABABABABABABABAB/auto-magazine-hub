@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { VerticalBanner } from "@/components/article/VerticalBanner";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -60,8 +60,8 @@ const Article = () => {
 
   return (
     <div className="max-w-7xl mx-auto py-4 md:py-8 px-4">
-      <div className="flex flex-col gap-4">
-        <div className="w-full space-y-4 md:space-y-8">
+      <div className={`flex ${isMobile ? 'flex-col gap-4' : 'gap-8'}`}>
+        <div className={`${isMobile ? 'w-full' : 'flex-1'} space-y-4 md:space-y-8`}>
           <img
             src={article.featured_image}
             alt={article.title}
@@ -79,17 +79,22 @@ const Article = () => {
                 {article.excerpt}
               </div>
             )}
+            <div
+              className="prose max-w-none text-base md:text-lg"
+              dangerouslySetInnerHTML={{ __html: article.content }}
+            />
           </div>
         </div>
-        
-        <div className="flex flex-col gap-8">
-          <div className="w-full flex justify-center">
+        {!isMobile && (
+          <div className="w-[300px] shrink-0">
             <VerticalBanner />
           </div>
-          <div className="prose max-w-none text-base md:text-lg">
-            <div dangerouslySetInnerHTML={{ __html: article.content }} />
+        )}
+        {isMobile && (
+          <div className="w-full">
+            <VerticalBanner />
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
