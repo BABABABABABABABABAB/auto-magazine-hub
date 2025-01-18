@@ -10,11 +10,12 @@ interface Article {
 
 interface ArticleGridProps {
   articles: Article[];
+  isCategory?: boolean;
 }
 
-export const ArticleGrid = ({ articles }: ArticleGridProps) => {
+export const ArticleGrid = ({ articles, isCategory = false }: ArticleGridProps) => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4">
+    <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4`}>
       {articles.map((article) => (
         <ArticleCard
           key={article.id}

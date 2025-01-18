@@ -53,7 +53,6 @@ const Home = () => {
     setSelectedSubcategoryId(null);
     setCurrentPage(1);
     
-    // Update URL search params
     if (category) {
       setSearchParams({ category });
     } else {
@@ -101,13 +100,15 @@ const Home = () => {
             selectedCategory={selectedCategory}
             articles={articles}
           />
-          <div className="container mx-auto">
-            <PaginationControls
-              currentPage={currentPage}
-              totalPages={totalPages}
-              setCurrentPage={setCurrentPage}
-            />
-          </div>
+          {selectedCategory && (
+            <div className="container mx-auto">
+              <PaginationControls
+                currentPage={currentPage}
+                totalPages={totalPages}
+                setCurrentPage={setCurrentPage}
+              />
+            </div>
+          )}
         </>
       )}
     </div>
