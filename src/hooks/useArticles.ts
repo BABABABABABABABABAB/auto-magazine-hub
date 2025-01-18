@@ -17,54 +17,50 @@ export const useArticles = (
   useEffect(() => {
     const fetchArticles = async () => {
       try {
+        setIsLoading(true);
+        console.log("Fetching articles with category:", selectedCategory);
+
+        // Base query for articles
         let query = supabase
           .from("articles")
           .select(`
-            id,
-            title,
-            featured_image,
-            created_at,
-            subcategories!inner (
+            *,
+            subcategories (
               id,
               name,
-              categories!inner (
+              categories (
+                id,
                 name
               )
             )
           `)
           .eq("hidden", false);
 
+        // Add category filter if selected
         if (selectedCategory) {
           query = query.eq("subcategories.categories.name", selectedCategory);
         }
 
+        // Add subcategory filter if selected
         if (selectedSubcategoryId) {
           query = query.eq("subcategory_id", selectedSubcategoryId);
         }
 
-        const countQuery = supabase
+        // Get total count
+        const { count: totalCount } = await supabase
           .from("articles")
           .select("*", { count: "exact", head: true })
           .eq("hidden", false);
 
-        if (selectedCategory) {
-          countQuery.eq("subcategories.categories.name", selectedCategory);
-        }
-        if (selectedSubcategoryId) {
-          countQuery.eq("subcategory_id", selectedSubcategoryId);
+        if (totalCount !== null) {
+          setTotalPages(Math.ceil(totalCount / ARTICLES_PER_PAGE));
         }
 
-        const { count, error: countError } = await countQuery;
-
-        if (countError) {
-          throw countError;
-        }
-
-        setTotalPages(Math.ceil((count || 0) / ARTICLES_PER_PAGE));
-
+        // Calculate pagination range
         const start = (currentPage - 1) * ARTICLES_PER_PAGE;
         const end = start + ARTICLES_PER_PAGE - 1;
 
+        // Get paginated data
         const { data, error } = await query
           .range(start, end)
           .order("created_at", { ascending: false });
@@ -72,6 +68,8 @@ export const useArticles = (
         if (error) {
           throw error;
         }
+
+        console.log("Fetched articles:", data);
 
         const formattedArticles = data.map((article) => ({
           id: article.id,
