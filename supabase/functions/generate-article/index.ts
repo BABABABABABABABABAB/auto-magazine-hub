@@ -12,8 +12,12 @@ serve(async (req) => {
   }
 
   try {
-    const { url } = await req.json()
+    const openAIApiKey = Deno.env.get('OPENAI_API_KEY')
+    if (!openAIApiKey) {
+      throw new Error('OpenAI API key is not configured')
+    }
 
+    const { url } = await req.json()
     if (!url) {
       throw new Error('URL is required')
     }
@@ -35,11 +39,11 @@ serve(async (req) => {
     const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${Deno.env.get('OPENAI_API_KEY')}`,
+        'Authorization': `Bearer ${openAIApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4',
+        model: 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
