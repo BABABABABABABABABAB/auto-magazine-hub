@@ -27,12 +27,28 @@ serve(async (req) => {
     const response = await fetch(url)
     const htmlContent = await response.text()
 
-    const textContent = htmlContent.replace(/<[^>]*>/g, ' ')
-      .replace(/\s+/g, ' ')
-      .trim()
-      .slice(0, 3000)
+    // Extract title from h1 tags
+    const h1Match = htmlContent.match(/<h1[^>]*>(.*?)<\/h1>/i)
+    const title = h1Match ? h1Match[1].trim() : ''
 
-    console.log('Extracted text content length:', textContent.length)
+    // Extract paragraphs
+    const paragraphs = htmlContent.match(/<p[^>]*>(.*?)<\/p>/gi)
+    const cleanParagraphs = paragraphs 
+      ? paragraphs
+          .map(p => p.replace(/<[^>]*>/g, '').trim())
+          .filter(p => p.length > 0)
+          .join('\n\n')
+      : ''
+
+    const textContent = `
+Title: ${title}
+
+Content:
+${cleanParagraphs}
+    `.trim()
+
+    console.log('Extracted title:', title)
+    console.log('Content length:', cleanParagraphs.length)
     console.log('Making request to OpenAI API...')
 
     const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
