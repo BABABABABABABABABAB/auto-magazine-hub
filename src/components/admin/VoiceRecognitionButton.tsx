@@ -13,34 +13,36 @@ export const VoiceRecognitionButton = ({ onTranscript }: VoiceRecognitionButtonP
   const { toast } = useToast();
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+    if (typeof window !== 'undefined') {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      const recognitionInstance = new SpeechRecognition();
-      recognitionInstance.continuous = false;
-      recognitionInstance.interimResults = false;
-      recognitionInstance.lang = 'fr-FR';
+      if (SpeechRecognition) {
+        const recognitionInstance = new SpeechRecognition();
+        recognitionInstance.continuous = false;
+        recognitionInstance.interimResults = false;
+        recognitionInstance.lang = 'fr-FR';
 
-      recognitionInstance.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        onTranscript(transcript);
-        setIsListening(false);
-      };
+        recognitionInstance.onresult = (event) => {
+          const transcript = event.results[0][0].transcript;
+          onTranscript(transcript);
+          setIsListening(false);
+        };
 
-      recognitionInstance.onerror = (event) => {
-        console.error('Speech recognition error:', event.error);
-        toast({
-          title: "Erreur",
-          description: "Une erreur est survenue lors de la reconnaissance vocale",
-          variant: "destructive",
-        });
-        setIsListening(false);
-      };
+        recognitionInstance.onerror = (event) => {
+          console.error('Speech recognition error:', event.error);
+          toast({
+            title: "Erreur",
+            description: "Une erreur est survenue lors de la reconnaissance vocale",
+            variant: "destructive",
+          });
+          setIsListening(false);
+        };
 
-      recognitionInstance.onend = () => {
-        setIsListening(false);
-      };
+        recognitionInstance.onend = () => {
+          setIsListening(false);
+        };
 
-      setRecognition(recognitionInstance);
+        setRecognition(recognitionInstance);
+      }
     }
 
     return () => {
