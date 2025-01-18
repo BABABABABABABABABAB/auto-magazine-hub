@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { Loader2 } from "lucide-react";
 
 interface SEOSectionProps {
   register: UseFormRegister<ArticleFormData>;
@@ -40,18 +41,22 @@ export const SEOSection = ({ register, setValue, watch }: SEOSectionProps) => {
 
       if (error) throw error;
       
+      // Update all fields with generated content
+      setValue("title", data.title);
+      setValue("slug", data.slug);
+      setValue("excerpt", data.excerpt);
       setValue("meta_title", data.metaTitle);
       setValue("meta_description", data.metaDescription);
 
       toast({
         title: "Succès",
-        description: "Métadonnées SEO générées avec succès",
+        description: "Contenu SEO généré avec succès",
       });
     } catch (error) {
       console.error('Error generating SEO:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de générer les métadonnées SEO",
+        description: "Impossible de générer le contenu SEO",
         variant: "destructive",
       });
     } finally {
@@ -68,8 +73,10 @@ export const SEOSection = ({ register, setValue, watch }: SEOSectionProps) => {
           disabled={generating}
           variant="outline"
           size="sm"
+          className="gap-2"
         >
-          {generating ? "Génération..." : "Générer SEO"}
+          {generating && <Loader2 className="h-4 w-4 animate-spin" />}
+          {generating ? "Génération..." : "Générer tout le contenu"}
         </Button>
       </CardHeader>
       <CardContent className="space-y-4">

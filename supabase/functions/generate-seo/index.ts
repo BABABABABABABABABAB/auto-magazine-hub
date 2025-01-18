@@ -18,7 +18,7 @@ serve(async (req) => {
     }
 
     console.log('Starting SEO generation process...')
-    const { title, content } = await req.json()
+    const { content, title } = await req.json()
     if (!content) {
       throw new Error('Content is required')
     }
@@ -35,7 +35,20 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'Tu es un expert en SEO qui génère des métadonnées optimisées pour le référencement. Tu dois générer un titre SEO (60 caractères max) et une description SEO (160 caractères max) à partir du contenu fourni.'
+            content: `Tu es un expert en SEO qui génère des métadonnées optimisées pour le référencement. 
+            Pour un article donné, tu dois générer:
+            - Un titre SEO (60 caractères max)
+            - Une description SEO (160 caractères max)
+            - Un slug URL-friendly basé sur le titre
+            - Un extrait accrocheur (200-300 caractères)
+            - Un titre optimisé si nécessaire
+            
+            Format de réponse attendu:
+            TITRE: [titre optimisé]
+            SLUG: [slug]
+            EXTRAIT: [extrait]
+            META_TITRE: [meta title]
+            META_DESCRIPTION: [meta description]`
           },
           {
             role: 'user',
@@ -54,12 +67,21 @@ serve(async (req) => {
     const data = await openAIResponse.json()
     console.log('OpenAI response received')
 
-    // Parse the response to extract title and description
+    // Parse the response to extract all fields
     const response = data.choices[0].message.content
-    const metaTitle = response.match(/Titre SEO : (.*)/i)?.[1] || ''
-    const metaDescription = response.match(/Description SEO : (.*)/i)?.[1] || ''
+    const title_match = response.match(/TITRE: (.*)/i)?.[1] || ''
+    const slug_match = response.match(/SLUG: (.*)/i)?.[1] || ''
+    const excerpt_match = response.match(/EXTRAIT: (.*)/i)?.[1] || ''
+    const metaTitle_match = response.match(/META_TITRE: (.*)/i)?.[1] || ''
+    const metaDescription_match = response.match(/META_DESCRIPTION: (.*)/i)?.[1] || ''
 
-    return new Response(JSON.stringify({ metaTitle, metaDescription }), {
+    return new Response(JSON.stringify({ 
+      title: title_match,
+      slug: slug_match,
+      excerpt: excerpt_match,
+      metaTitle: metaTitle_match,
+      metaDescription: metaDescription_match
+    }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
   } catch (error) {
