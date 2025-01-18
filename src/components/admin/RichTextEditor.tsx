@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { VoiceRecognitionButton } from './VoiceRecognitionButton';
 import {
   Dialog,
   DialogContent,
@@ -89,6 +90,14 @@ export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
     } finally {
       setGenerating(false);
     }
+  };
+
+  const handleVoiceTranscript = (text: string) => {
+    setPrompt(text);
+    // Lancer automatiquement la génération après la transcription
+    setTimeout(() => {
+      handleGenerateFromPrompt();
+    }, 500);
   };
 
   const handleRegenerate = async () => {
@@ -288,12 +297,15 @@ export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
       <div className="flex gap-2">
         <div className="flex-1">
           <Label htmlFor="prompt">Prompt pour générer du contenu</Label>
-          <Textarea
-            id="prompt"
-            placeholder="Décrivez l'article que vous souhaitez générer..."
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-          />
+          <div className="flex gap-2">
+            <Textarea
+              id="prompt"
+              placeholder="Décrivez l'article que vous souhaitez générer..."
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+            />
+            <VoiceRecognitionButton onTranscript={handleVoiceTranscript} />
+          </div>
         </div>
         <Button
           onClick={handleGenerateFromPrompt}
