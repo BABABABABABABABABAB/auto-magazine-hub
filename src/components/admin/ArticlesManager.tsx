@@ -12,9 +12,21 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export const ArticlesManager = () => {
   const [articles, setArticles] = useState([]);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [articleToDelete, setArticleToDelete] = useState(null);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -40,8 +52,18 @@ export const ArticlesManager = () => {
     setArticles(data);
   };
 
-  const handleDelete = async (id) => {
-    const { error } = await supabase.from("articles").delete().eq("id", id);
+  const confirmDelete = (article) => {
+    setArticleToDelete(article);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (!articleToDelete) return;
+
+    const { error } = await supabase
+      .from("articles")
+      .delete()
+      .eq("id", articleToDelete.id);
 
     if (error) {
       toast({
@@ -57,6 +79,8 @@ export const ArticlesManager = () => {
       description: "Article supprimé avec succès",
     });
 
+    setDeleteDialogOpen(false);
+    setArticleToDelete(null);
     fetchArticles();
   };
 
@@ -137,7 +161,7 @@ export const ArticlesManager = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => handleDelete(article.id)}
+                  onClick={() => confirmDelete(article)}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -161,6 +185,22 @@ export const ArticlesManager = () => {
           ))}
         </TableBody>
       </Table>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Cette action est irréversible. Cela supprimera définitivement l'article
+              "{articleToDelete?.title}".
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete}>Supprimer</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

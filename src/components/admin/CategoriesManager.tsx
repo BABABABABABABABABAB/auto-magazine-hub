@@ -11,10 +11,22 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export const CategoriesManager = () => {
   const [categories, setCategories] = useState([]);
   const [newCategory, setNewCategory] = useState({ name: "", slug: "" });
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -64,8 +76,18 @@ export const CategoriesManager = () => {
     fetchCategories();
   };
 
-  const handleDelete = async (id) => {
-    const { error } = await supabase.from("categories").delete().eq("id", id);
+  const confirmDelete = (category) => {
+    setCategoryToDelete(category);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDelete = async () => {
+    if (!categoryToDelete) return;
+
+    const { error } = await supabase
+      .from("categories")
+      .delete()
+      .eq("id", categoryToDelete.id);
 
     if (error) {
       toast({
@@ -81,6 +103,8 @@ export const CategoriesManager = () => {
       description: "Catégorie supprimée avec succès",
     });
 
+    setDeleteDialogOpen(false);
+    setCategoryToDelete(null);
     fetchCategories();
   };
 
@@ -140,7 +164,7 @@ export const CategoriesManager = () => {
                   <Button
                     variant="destructive"
                     size="sm"
-                    onClick={() => handleDelete(category.id)}
+                    onClick={() => confirmDelete(category)}
                     className="w-full sm:w-auto"
                   >
                     Supprimer
@@ -151,6 +175,22 @@ export const CategoriesManager = () => {
           </TableBody>
         </Table>
       </div>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Cette action est irréversible. Cela supprimera définitivement la catégorie
+              "{categoryToDelete?.name}" et toutes ses sous-catégories associées.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete}>Supprimer</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

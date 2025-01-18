@@ -7,6 +7,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { useState } from "react";
 
 interface SubcategoriesTableProps {
   subcategories: any[];
@@ -14,6 +25,21 @@ interface SubcategoriesTableProps {
 }
 
 export const SubcategoriesTable = ({ subcategories, onDelete }: SubcategoriesTableProps) => {
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [subcategoryToDelete, setSubcategoryToDelete] = useState(null);
+
+  const confirmDelete = (subcategory) => {
+    setSubcategoryToDelete(subcategory);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDelete = () => {
+    if (!subcategoryToDelete) return;
+    onDelete(subcategoryToDelete.id);
+    setDeleteDialogOpen(false);
+    setSubcategoryToDelete(null);
+  };
+
   return (
     <div className="overflow-auto">
       <Table>
@@ -35,7 +61,7 @@ export const SubcategoriesTable = ({ subcategories, onDelete }: SubcategoriesTab
                 <Button
                   variant="destructive"
                   size="sm"
-                  onClick={() => onDelete(subcategory.id)}
+                  onClick={() => confirmDelete(subcategory)}
                   className="w-full sm:w-auto"
                 >
                   Supprimer
@@ -45,6 +71,22 @@ export const SubcategoriesTable = ({ subcategories, onDelete }: SubcategoriesTab
           ))}
         </TableBody>
       </Table>
+
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Cette action est irréversible. Cela supprimera définitivement la sous-catégorie
+              "{subcategoryToDelete?.name}".
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete}>Supprimer</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
