@@ -13,6 +13,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+import { Loader2 } from "lucide-react"
 
 interface RichTextEditorProps {
   value: string;
@@ -23,6 +26,7 @@ export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
   const [generating, setGenerating] = useState(false);
   const [showLinkDialog, setShowLinkDialog] = useState(false);
   const [url, setUrl] = useState('');
+  const [prompt, setPrompt] = useState('');
   const { toast } = useToast();
   
   const editor = useEditor({
@@ -49,6 +53,43 @@ export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
   if (!editor) {
     return null;
   }
+
+  const handleGenerateFromPrompt = async () => {
+    if (!prompt.trim()) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez entrer un prompt pour générer du contenu",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setGenerating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-from-prompt', {
+        body: { prompt }
+      });
+
+      if (error) throw error;
+      
+      editor.commands.setContent(data.content);
+      onChange(data.content);
+
+      toast({
+        title: "Succès",
+        description: "Contenu généré avec succès",
+      });
+    } catch (error) {
+      console.error('Error generating content:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de générer le contenu",
+        variant: "destructive",
+      });
+    } finally {
+      setGenerating(false);
+    }
+  };
 
   const handleRegenerate = async () => {
     const content = editor.getHTML();
@@ -228,22 +269,75 @@ export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
           </button>
         </div>
         
-        <Button 
-          onClick={handleRegenerate}
-          disabled={generating}
-          variant="outline"
-          size="sm"
-        >
-          {generating ? "Régénération..." : "Régénérer le contenu"}
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            onClick={handleRegenerate}
+            disabled={generating}
+            variant="outline"
+            size="sm"
+          >
+            {generating ? "Régénération..." : "Régénérer le contenu"}
+          </Button>
+        </div>
       </div>
     );
   };
 
   return (
-    <div className="relative border rounded-lg overflow-hidden">
-      <MenuBar />
-      <EditorContent editor={editor} />
+    <div className="space-y-4">
+      <div className="flex gap-2">
+        <div className="flex-1">
+          <Label htmlFor="prompt">Prompt pour générer du contenu</Label>
+          <Textarea
+            id="prompt"
+            placeholder="Décrivez l'article que vous souhaitez générer..."
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+          />
+        </div>
+        <Button
+          onClick={handleGenerateFromPrompt}
+          disabled={generating}
+          className="self-end"
+        >
+          {generating ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Génération...
+            </>
+          ) : (
+            "Générer"
+          )}
+        </Button>
+      </div>
+
+      <div className="relative border rounded-lg overflow-hidden">
+        <MenuBar />
+        <EditorContent editor={editor} />
+      </div>
+
+      <Dialog open={showLinkDialog} onOpenChange={setShowLinkDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Ajouter un lien</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <Input
+              placeholder="https://example.com"
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+            />
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setShowLinkDialog(false)}>
+                Annuler
+              </Button>
+              <Button onClick={setLink}>
+                {editor.isActive('link') ? 'Mettre à jour le lien' : 'Créer le lien'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
