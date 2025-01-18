@@ -33,7 +33,7 @@ export const useArticles = (
                 name
               )
             )
-          `)
+          `, { count: 'exact' })
           .eq("hidden", false);
 
         // Si une sous-catégorie est sélectionnée, on filtre par son ID
@@ -48,11 +48,8 @@ export const useArticles = (
         const start = (currentPage - 1) * ARTICLES_PER_PAGE;
         const end = start + ARTICLES_PER_PAGE - 1;
 
-        // Get paginated results
-        const { data: countResult } = await query.count();
-        const count = countResult?.[0]?.count ?? 0;
-        
-        const { data, error } = await query
+        // Get paginated results with count
+        const { data, error, count } = await query
           .range(start, end)
           .order("created_at", { ascending: false });
 
@@ -60,7 +57,7 @@ export const useArticles = (
           throw error;
         }
 
-        setTotalPages(Math.ceil(count / ARTICLES_PER_PAGE));
+        setTotalPages(Math.ceil((count || 0) / ARTICLES_PER_PAGE));
 
         console.log("Fetched articles:", data);
 
