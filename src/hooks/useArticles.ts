@@ -36,9 +36,9 @@ export const useArticles = (
           `)
           .eq("hidden", false);
 
-        // Si une sous-catégorie est sélectionnée, on filtre par son nom
+        // Si une sous-catégorie est sélectionnée, on filtre par son ID
         if (selectedSubcategoryId) {
-          query = query.eq("subcategories.id", selectedSubcategoryId);
+          query = query.eq("subcategory_id", selectedSubcategoryId);
         } else if (selectedCategory && selectedCategory !== "Tout") {
           // Si pas de sous-catégorie mais une catégorie sélectionnée
           query = query.eq("subcategories.categories.name", selectedCategory);
@@ -49,6 +49,9 @@ export const useArticles = (
         const end = start + ARTICLES_PER_PAGE - 1;
 
         // Get paginated results
+        const { data: countResult } = await query.count();
+        const count = countResult?.[0]?.count ?? 0;
+        
         const { data, error } = await query
           .range(start, end)
           .order("created_at", { ascending: false });
@@ -57,13 +60,7 @@ export const useArticles = (
           throw error;
         }
 
-        // Get total count for pagination
-        const { count } = await supabase
-          .from("articles")
-          .select("*", { count: "exact", head: true });
-
-        const totalCount = count || 0;
-        setTotalPages(Math.ceil(totalCount / ARTICLES_PER_PAGE));
+        setTotalPages(Math.ceil(count / ARTICLES_PER_PAGE));
 
         console.log("Fetched articles:", data);
 
