@@ -70,6 +70,11 @@ const Article = () => {
           <h1 className="text-4xl font-bold font-roboto text-magazine-black">
             {article.title}
           </h1>
+          {article.excerpt && (
+            <div className="text-xl text-gray-700 font-medium italic border-l-4 border-magazine-red pl-4">
+              {article.excerpt}
+            </div>
+          )}
           <div
             className="prose max-w-none"
             dangerouslySetInnerHTML={{ __html: article.content }}
