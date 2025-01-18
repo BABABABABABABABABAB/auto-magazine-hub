@@ -82,25 +82,14 @@ const Article = () => {
           </div>
         </div>
         
-        {isMobile ? (
-          <>
-            <div className="prose max-w-none text-base md:text-lg">
-              <div dangerouslySetInnerHTML={{ __html: article.content }} />
-            </div>
-            <div className="w-full flex justify-center my-4">
-              <VerticalBanner />
-            </div>
-          </>
-        ) : (
-          <div className="flex gap-8">
-            <div className="flex-1 prose max-w-none text-base md:text-lg">
-              <div dangerouslySetInnerHTML={{ __html: article.content }} />
-            </div>
-            <div className="w-[300px] shrink-0">
-              <VerticalBanner />
-            </div>
+        <div className="flex flex-col gap-8">
+          <div className="w-full flex justify-center">
+            <VerticalBanner />
           </div>
-        )}
+          <div className="prose max-w-none text-base md:text-lg">
+            <div dangerouslySetInnerHTML={{ __html: article.content }} />
+          </div>
+        </div>
       </div>
     </div>
   );
