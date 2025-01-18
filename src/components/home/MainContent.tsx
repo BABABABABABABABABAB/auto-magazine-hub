@@ -63,8 +63,8 @@ export const MainContent = ({ selectedCategory, articles }: MainContentProps) =>
       )}
 
       <div className="grid grid-cols-4 gap-4">
-        {/* Left grid - 6 articles */}
-        <div className="col-span-3 grid grid-cols-3 gap-4">
+        {/* Left grid - 6 articles in a more compact layout */}
+        <div className="col-span-2 grid grid-cols-2 gap-4">
           {leftGridArticles.map((article) => (
             <ArticleCard
               key={article.id}
@@ -77,8 +77,8 @@ export const MainContent = ({ selectedCategory, articles }: MainContentProps) =>
           ))}
         </div>
 
-        {/* Right column - 2 articles */}
-        <div className="space-y-4">
+        {/* Right column - 2 larger articles */}
+        <div className="col-span-2 space-y-4">
           {rightArticles.map((article) => (
             <ArticleCard
               key={article.id}
