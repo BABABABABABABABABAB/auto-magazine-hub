@@ -43,7 +43,6 @@ const Admin = () => {
                 
                 <TabsContent value="articles" className="mt-10">
                   <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10">
-                    <h2 className="text-2xl font-bold">Articles</h2>
                     <Button className="bg-magazine-red text-white hover:bg-magazine-red/90 w-full sm:w-auto" asChild>
                       <Link to="/admin/nouvel-article">Nouvel Article</Link>
                     </Button>
@@ -54,28 +53,23 @@ const Admin = () => {
                 <TabsContent value="categories" className="mt-10">
                   <div className="grid grid-cols-1 xl:grid-cols-2 gap-16">
                     <div className="space-y-8">
-                      <h2 className="text-2xl font-bold mb-8">Catégories</h2>
                       <CategoriesManager />
                     </div>
                     <div className="space-y-8">
-                      <h2 className="text-2xl font-bold mb-8">Sous-catégories</h2>
                       <SubcategoriesManager />
                     </div>
                   </div>
                 </TabsContent>
                 
                 <TabsContent value="subcategories" className="mt-10">
-                  <h2 className="text-2xl font-bold mb-8">Sous-catégories</h2>
                   <SubcategoriesManager />
                 </TabsContent>
 
                 <TabsContent value="banner" className="mt-10">
-                  <h2 className="text-2xl font-bold mb-8">Bannière</h2>
                   <BannerManager />
                 </TabsContent>
 
                 <TabsContent value="vertical-banner" className="mt-10">
-                  <h2 className="text-2xl font-bold mb-8">Bannière Verticale</h2>
                   <VerticalBannerManager />
                 </TabsContent>
               </Tabs>
