@@ -1,5 +1,9 @@
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
+import { Button } from '@/components/ui/button';
+import { useState } from 'react';
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
 
 interface RichTextEditorProps {
   value: string;
@@ -7,6 +11,9 @@ interface RichTextEditorProps {
 }
 
 export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
+  const [generating, setGenerating] = useState(false);
+  const { toast } = useToast();
+  
   const editor = useEditor({
     extensions: [StarterKit],
     content: value,
@@ -24,24 +31,63 @@ export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
     return null;
   }
 
+  const handleRegenerate = async () => {
+    const content = editor.getHTML();
+    if (!content) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez d'abord ajouter du contenu à régénérer",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setGenerating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-article', {
+        body: { content }
+      });
+
+      if (error) throw error;
+      
+      editor.commands.setContent(data.content);
+      onChange(data.content);
+
+      toast({
+        title: "Succès",
+        description: "Contenu régénéré avec succès",
+      });
+    } catch (error) {
+      console.error('Error regenerating content:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de régénérer le contenu",
+        variant: "destructive",
+      });
+    } finally {
+      setGenerating(false);
+    }
+  };
+
   const MenuBar = () => {
     const isTextSelected = editor.view.state.selection.content().size > 0;
 
     return (
       <div className={`
-        border-b p-2 flex gap-2 flex-wrap
+        border-b p-2 flex gap-2 flex-wrap items-center justify-between
         ${isTextSelected ? 'bg-gray-50' : ''}
         sticky top-0 z-10 bg-white
       `}>
-        <button
-          onClick={() => editor.chain().focus().setParagraph().run()}
-          className={`p-2 rounded hover:bg-gray-100 ${
-            editor.isActive('paragraph') ? 'bg-gray-200' : ''
-          }`}
-          title="Paragraphe"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M13 4v16"/><path d="M17 4v16"/><path d="M19 4H9.5a4.5 4.5 0 0 0 0 9H13"/></svg>
-        </button>
+        <div className="flex gap-2 flex-wrap items-center">
+          <button
+            onClick={() => editor.chain().focus().setParagraph().run()}
+            className={`p-2 rounded hover:bg-gray-100 ${
+              editor.isActive('paragraph') ? 'bg-gray-200' : ''
+            }`}
+            title="Paragraphe"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M13 4v16"/><path d="M17 4v16"/><path d="M19 4H9.5a4.5 4.5 0 0 0 0 9H13"/></svg>
+          </button>
         <button
           onClick={() => editor.chain().focus().toggleBold().run()}
           className={`p-2 rounded hover:bg-gray-100 ${
@@ -116,6 +162,16 @@ export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>
         </button>
+        </div>
+        
+        <Button 
+          onClick={handleRegenerate}
+          disabled={generating}
+          variant="outline"
+          size="sm"
+        >
+          {generating ? "Régénération..." : "Régénérer le contenu"}
+        </Button>
       </div>
     );
   };
