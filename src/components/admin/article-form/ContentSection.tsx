@@ -41,31 +41,24 @@ export const ContentSection = ({
 
     setGenerating(true);
     try {
-      const { data: { publicUrl: functionUrl } } = supabase.functions;
-      const response = await fetch(`${functionUrl}/generate-article`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`,
-        },
-        body: JSON.stringify({ url: sourceUrl }),
+      const { data, error } = await supabase.functions.invoke('generate-article', {
+        body: { url: sourceUrl }
       });
 
-      if (!response.ok) throw new Error('Erreur lors de la génération');
-
-      const article = await response.json();
+      if (error) throw error;
       
-      setValue("title", article.title);
-      setValue("content", article.content);
-      setValue("excerpt", article.excerpt);
-      setValue("meta_title", article.meta_title);
-      setValue("meta_description", article.meta_description);
+      setValue("title", data.title);
+      setValue("content", data.content);
+      setValue("excerpt", data.excerpt);
+      setValue("meta_title", data.meta_title);
+      setValue("meta_description", data.meta_description);
 
       toast({
         title: "Succès",
         description: "Article généré avec succès",
       });
     } catch (error) {
+      console.error('Error generating article:', error);
       toast({
         title: "Erreur",
         description: "Impossible de générer l'article",
