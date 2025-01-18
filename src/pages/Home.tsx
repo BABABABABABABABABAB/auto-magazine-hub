@@ -181,7 +181,7 @@ const Home = () => {
             onSelectCategory={setSelectedCategory}
             onSelectSubcategory={(subcategoryId) => {
               setSelectedSubcategoryId(subcategoryId);
-              setCurrentPage(1); // Reset to first page when changing category
+              setCurrentPage(1);
             }}
           />
         </div>
@@ -209,16 +209,10 @@ const Home = () => {
         )
       )}
 
-      {/* Red Separator */}
-      <div className="container mx-auto my-8">
+      {/* Recent Articles Title and Separator */}
+      <div className="container mx-auto mt-8">
+        <h2 className="text-2xl font-bold text-white text-left mb-4">Articles récents</h2>
         <Separator className="bg-magazine-red h-1" />
-      </div>
-
-      {/* Recent Articles Title Band */}
-      <div className="bg-magazine-red py-3 mb-8">
-        <div className="container mx-auto">
-          <h2 className="text-2xl font-bold text-white text-left">Articles récents</h2>
-        </div>
       </div>
 
       {/* Articles Grid */}
@@ -239,7 +233,6 @@ const Home = () => {
                 
                 {[...Array(totalPages)].map((_, index) => {
                   const pageNumber = index + 1;
-                  // Show first page, current page, last page, and pages around current page
                   if (
                     pageNumber === 1 ||
                     pageNumber === totalPages ||
