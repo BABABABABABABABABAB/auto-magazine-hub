@@ -6,9 +6,13 @@ import { Banner } from "@/components/home/Banner";
 import { MainContent } from "@/components/home/MainContent";
 import { PaginationControls } from "@/components/home/Pagination";
 import { useArticles } from "@/hooks/useArticles";
+import { useSearchParams } from "react-router-dom";
 
 const Home = () => {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(
+    searchParams.get("category")
+  );
   const [selectedSubcategoryId, setSelectedSubcategoryId] = useState<string | null>(
     null
   );
@@ -48,6 +52,13 @@ const Home = () => {
     setSelectedCategory(category);
     setSelectedSubcategoryId(null);
     setCurrentPage(1);
+    
+    // Update URL search params
+    if (category) {
+      setSearchParams({ category });
+    } else {
+      setSearchParams({});
+    }
   };
 
   const handleSubcategorySelect = (subcategoryId: string) => {

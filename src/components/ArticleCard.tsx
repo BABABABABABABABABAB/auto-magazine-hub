@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -13,8 +13,13 @@ interface ArticleCardProps {
 }
 
 export const ArticleCard = ({ id, title, imageUrl, category, subcategory, createdAt }: ArticleCardProps) => {
+  const [searchParams] = useSearchParams();
+  const categoryParam = searchParams.get("category");
+  
+  const articleUrl = `/article/${id}${categoryParam ? `?category=${categoryParam}` : ''}`;
+
   return (
-    <Link to={`/article/${id}`}>
+    <Link to={articleUrl}>
       <Card className="hover:shadow-lg transition-shadow duration-300">
         <CardHeader className="p-0">
           <img
