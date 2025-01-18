@@ -36,9 +36,9 @@ export const useArticles = (
           `)
           .eq("hidden", false);
 
-        // Si une sous-catégorie est sélectionnée, on filtre uniquement par celle-ci
+        // Si une sous-catégorie est sélectionnée, on filtre par son nom
         if (selectedSubcategoryId) {
-          query = query.eq("subcategory_id", selectedSubcategoryId);
+          query = query.eq("subcategories.id", selectedSubcategoryId);
         } else if (selectedCategory && selectedCategory !== "Tout") {
           // Si pas de sous-catégorie mais une catégorie sélectionnée
           query = query.eq("subcategories.categories.name", selectedCategory);
