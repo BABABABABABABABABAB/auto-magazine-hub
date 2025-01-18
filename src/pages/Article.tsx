@@ -84,11 +84,11 @@ const Article = () => {
         
         {isMobile ? (
           <>
-            <div className="w-full flex justify-center my-4">
-              <VerticalBanner />
-            </div>
             <div className="prose max-w-none text-base md:text-lg">
               <div dangerouslySetInnerHTML={{ __html: article.content }} />
+            </div>
+            <div className="w-full flex justify-center my-4">
+              <VerticalBanner />
             </div>
           </>
         ) : (
