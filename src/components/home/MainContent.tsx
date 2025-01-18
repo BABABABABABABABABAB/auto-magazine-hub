@@ -9,7 +9,6 @@ interface MainContentProps {
 
 export const MainContent = ({ selectedCategory, articles }: MainContentProps) => {
   if (selectedCategory) {
-    // Page catégorie : grille 4x4
     return (
       <div className="container mx-auto py-8">
         <h2 className="text-2xl font-bold text-white text-left mb-4">
@@ -21,7 +20,6 @@ export const MainContent = ({ selectedCategory, articles }: MainContentProps) =>
     );
   }
 
-  // Page d'accueil : layout spécifique
   const topArticles = articles.slice(0, 3);
   const featuredArticle = articles[3];
   const leftGridArticles = articles.slice(4, 10);
@@ -35,8 +33,8 @@ export const MainContent = ({ selectedCategory, articles }: MainContentProps) =>
       </h2>
       <Separator className="bg-magazine-red h-1" />
       
-      {/* Top 3 articles */}
-      <div className="grid grid-cols-3 gap-4 mb-4">
+      {/* Top 3 articles - Responsive grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
         {topArticles.map((article) => (
           <ArticleCard
             key={article.id}
@@ -62,9 +60,10 @@ export const MainContent = ({ selectedCategory, articles }: MainContentProps) =>
         </div>
       )}
 
-      <div className="grid grid-cols-4 gap-4">
+      {/* Main content grid - Responsive */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         {/* Left grid - 6 articles in a more compact layout */}
-        <div className="col-span-2 grid grid-cols-2 gap-4">
+        <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
           {leftGridArticles.map((article) => (
             <ArticleCard
               key={article.id}
@@ -79,8 +78,8 @@ export const MainContent = ({ selectedCategory, articles }: MainContentProps) =>
         </div>
 
         {/* Right column - 2 larger articles */}
-        <div className="col-span-2 h-full grid grid-rows-2 gap-4">
-          {rightArticles.map((article, index) => (
+        <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4">
+          {rightArticles.map((article) => (
             <div key={article.id} className="h-full">
               <ArticleCard
                 id={article.id}
@@ -95,8 +94,8 @@ export const MainContent = ({ selectedCategory, articles }: MainContentProps) =>
         </div>
       </div>
 
-      {/* Bottom 3 articles */}
-      <div className="grid grid-cols-3 gap-4 mt-4">
+      {/* Bottom 3 articles - Responsive grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
         {bottomArticles.map((article) => (
           <ArticleCard
             key={article.id}
