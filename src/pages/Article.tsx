@@ -61,13 +61,13 @@ const Article = () => {
   return (
     <div className="max-w-7xl mx-auto py-4 md:py-8 px-4">
       <div className={`flex ${isMobile ? 'flex-col gap-4' : 'gap-8'}`}>
-        <div className={`${isMobile ? 'w-full' : 'flex-1'} space-y-4 md:space-y-8`}>
+        <div className={`${isMobile ? 'w-full' : 'flex-1'}`}>
           <img
             src={article.featured_image}
             alt={article.title}
             className="w-full h-48 md:h-96 object-cover rounded-lg"
           />
-          <div className="space-y-3 md:space-y-4">
+          <div className="space-y-3 md:space-y-4 mt-4">
             <div className="text-magazine-red text-sm font-medium">
               {article.subcategories?.categories?.name}
             </div>
@@ -79,10 +79,6 @@ const Article = () => {
                 {article.excerpt}
               </div>
             )}
-            <div
-              className="prose max-w-none text-base md:text-lg"
-              dangerouslySetInnerHTML={{ __html: article.content }}
-            />
           </div>
         </div>
         {!isMobile && (
@@ -90,12 +86,18 @@ const Article = () => {
             <VerticalBanner />
           </div>
         )}
-        {isMobile && (
-          <div className="w-full">
-            <VerticalBanner />
-          </div>
-        )}
       </div>
+      <div className="mt-8">
+        <div
+          className="prose max-w-none text-base md:text-lg"
+          dangerouslySetInnerHTML={{ __html: article.content }}
+        />
+      </div>
+      {isMobile && (
+        <div className="w-full mt-8">
+          <VerticalBanner />
+        </div>
+      )}
     </div>
   );
 };
