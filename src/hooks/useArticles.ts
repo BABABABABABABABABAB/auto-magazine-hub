@@ -20,15 +20,16 @@ export const useArticles = (
         setIsLoading(true);
         console.log("Fetching articles with category:", selectedCategory);
 
-        // Base query for articles with joins
+        // Base query for articles with subcategory and category information
         let query = supabase
           .from("articles")
           .select(`
             *,
-            subcategories (
+            subcategories!inner (
               id,
               name,
-              categories (
+              category_id,
+              categories!inner (
                 id,
                 name
               )
@@ -38,21 +39,31 @@ export const useArticles = (
 
         // Add category filter if selected
         if (selectedCategory && selectedCategory !== "Tout") {
-          const { data: subcategoryIds } = await supabase
-            .from("subcategories")
-            .select("id")
-            .eq("categories.name", selectedCategory)
-            .limit(1000);
-
-          if (subcategoryIds && subcategoryIds.length > 0) {
-            const ids = subcategoryIds.map(sub => sub.id);
-            query = query.in("subcategory_id", ids);
-          }
+          query = query.eq("subcategories.categories.name", selectedCategory);
         }
 
         // Add subcategory filter if selected
         if (selectedSubcategoryId) {
           query = query.eq("subcategory_id", selectedSubcategoryId);
+        }
+
+        // Get total count for pagination
+        const countQuery = supabase
+          .from("articles")
+          .select("*", { count: "exact", head: true })
+          .eq("hidden", false);
+
+        if (selectedCategory && selectedCategory !== "Tout") {
+          countQuery.eq("subcategories.categories.name", selectedCategory);
+        }
+        if (selectedSubcategoryId) {
+          countQuery.eq("subcategory_id", selectedSubcategoryId);
+        }
+
+        const { count } = await countQuery;
+
+        if (count !== null) {
+          setTotalPages(Math.ceil(count / ARTICLES_PER_PAGE));
         }
 
         // Calculate pagination range
@@ -69,16 +80,6 @@ export const useArticles = (
         }
 
         console.log("Fetched articles:", data);
-
-        // Get total count for pagination
-        const { count } = await supabase
-          .from("articles")
-          .select("*", { count: "exact", head: true })
-          .eq("hidden", false);
-
-        if (count !== null) {
-          setTotalPages(Math.ceil(count / ARTICLES_PER_PAGE));
-        }
 
         const formattedArticles = data.map((article) => ({
           id: article.id,
