@@ -14,6 +14,11 @@ serve(async (req) => {
   try {
     const { url } = await req.json()
 
+    if (!url) {
+      throw new Error('URL is required')
+    }
+
+    console.log('Fetching content from URL:', url)
     // Fetch content from URL
     const response = await fetch(url)
     const htmlContent = await response.text()
@@ -24,6 +29,8 @@ serve(async (req) => {
       .trim()
       .slice(0, 3000) // Limit content length
 
+    console.log('Extracted text content length:', textContent.length)
+
     // Generate article using OpenAI
     const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
@@ -32,7 +39,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4',
         messages: [
           {
             role: 'system',
@@ -52,7 +59,19 @@ serve(async (req) => {
       }),
     })
 
+    if (!openAIResponse.ok) {
+      const errorData = await openAIResponse.json()
+      console.error('OpenAI API error:', errorData)
+      throw new Error(`OpenAI API error: ${errorData.error?.message || 'Unknown error'}`)
+    }
+
     const data = await openAIResponse.json()
+    console.log('OpenAI response received:', data)
+
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      throw new Error('Invalid response format from OpenAI')
+    }
+
     const generatedContent = JSON.parse(data.choices[0].message.content)
 
     return new Response(JSON.stringify(generatedContent), {
