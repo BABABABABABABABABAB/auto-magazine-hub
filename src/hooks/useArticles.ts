@@ -38,9 +38,7 @@ export const useArticles = (
               )
             )
           `, { count: 'exact' })
-          .eq("hidden", false)
-          .order("created_at", { ascending: false })
-          .range(start, end);
+          .eq("hidden", false);
 
         // Si une sous-catégorie est sélectionnée, on filtre par son ID
         if (selectedSubcategoryId) {
@@ -50,6 +48,11 @@ export const useArticles = (
           // Si pas de sous-catégorie mais une catégorie sélectionnée
           query = query.eq("subcategories.categories.name", selectedCategory);
         }
+
+        // Ajout de l'ordre et de la pagination
+        query = query
+          .order("created_at", { ascending: false })
+          .range(start, end);
 
         const { data, error, count } = await query;
 
