@@ -60,6 +60,7 @@ export const CategoryFilter = ({
   const handleSubcategoryClick = (subcategoryId: string, category: string, event: React.MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
+    console.log("Subcategory clicked:", subcategoryId, "Category:", category);
     if (onSelectSubcategory) {
       onSelectSubcategory(subcategoryId);
       onSelectCategory(category);
@@ -74,10 +75,12 @@ export const CategoryFilter = ({
       return;
     }
 
+    onSelectCategory(category);
     if (subcategories[category || ""]?.length > 0) {
       toggleCategory(category || "");
-    } else {
-      onSelectCategory(category);
+    }
+    
+    if (!subcategories[category || ""]?.length) {
       setIsMobileMenuOpen(false);
     }
   };
@@ -112,8 +115,8 @@ export const CategoryFilter = ({
                       {subcategories[category].map((subcategory) => (
                         <button
                           key={subcategory.id}
-                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-magazine-red hover:text-white transition-colors"
                           onClick={(e) => handleSubcategoryClick(subcategory.id, category, e)}
+                          className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-magazine-red hover:text-white transition-colors"
                         >
                           {subcategory.name}
                         </button>
