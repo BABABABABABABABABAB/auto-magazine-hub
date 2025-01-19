@@ -2,19 +2,16 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { ImageUploadForm } from "./banner/ImageUploadForm";
-import { ImageUrlInput } from "./banner/ImageUrlInput";
-import { ImagePreview } from "./banner/ImagePreview";
-import { Switch } from "@/components/ui/switch";
+import { ImageUploadForm } from "@/components/shared/ImageUploadForm";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import imageCompression from "browser-image-compression";
+import { Switch } from "@/components/ui/switch";
 
 export const VerticalBannerManager = () => {
   const [imageUrl, setImageUrl] = useState("");
   const [linkUrl, setLinkUrl] = useState("");
   const [isActive, setIsActive] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [file, setFile] = useState<File | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -45,65 +42,16 @@ export const VerticalBannerManager = () => {
     }
   };
 
-  const compressImage = async (file: File): Promise<File> => {
-    const options = {
-      maxSizeMB: 0.03, // 30kb = 0.03MB
-      maxWidthOrHeight: 1920,
-      useWebWorker: true,
-      fileType: 'image/webp', // Convert to WebP format
-    };
-
-    try {
-      return await imageCompression(file, options);
-    } catch (error) {
-      console.error("Error compressing image:", error);
-      throw error;
-    }
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setFile(e.target.files[0]);
-    }
-  };
-
-  const uploadImage = async (file: File) => {
-    const compressedFile = await compressImage(file);
-    const fileExt = 'webp'; // Always use WebP extension
-    const fileName = `${Math.random()}.${fileExt}`;
-    const filePath = `vertical-banners/${fileName}`;
-
-    const { error: uploadError, data } = await supabase.storage
-      .from('ui_images')
-      .upload(filePath, compressedFile);
-
-    if (uploadError) {
-      throw new Error('Erreur lors du téléchargement de l\'image');
-    }
-
-    const { data: { publicUrl } } = supabase.storage
-      .from('ui_images')
-      .getPublicUrl(filePath);
-
-    return publicUrl;
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      let finalImageUrl = imageUrl;
-
-      if (file) {
-        finalImageUrl = await uploadImage(file);
-      }
-
       const { error } = await supabase
         .from('vertical_banner_settings')
         .insert([
           {
-            image_url: finalImageUrl,
+            image_url: imageUrl,
             link_url: linkUrl,
             is_active: isActive
           }
@@ -115,9 +63,6 @@ export const VerticalBannerManager = () => {
         title: "Succès",
         description: "La bannière verticale a été mise à jour",
       });
-
-      setImageUrl(finalImageUrl);
-      setFile(null);
     } catch (error) {
       toast({
         title: "Erreur",
@@ -132,41 +77,32 @@ export const VerticalBannerManager = () => {
   return (
     <div className="space-y-6">
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-4">
-          <ImageUploadForm onFileChange={handleFileChange} />
-          
-          <div className="divider">ou</div>
-          
-          <ImageUrlInput 
-            imageUrl={imageUrl}
-            onUrlChange={(e) => setImageUrl(e.target.value)}
+        <ImageUploadForm
+          onImageUpload={setImageUrl}
+          bucketName="ui_images"
+          folderPath="vertical-banners"
+          label="Image de la bannière verticale"
+        />
+
+        <div className="space-y-2">
+          <Label htmlFor="linkUrl">URL du lien (optionnel)</Label>
+          <Input
+            id="linkUrl"
+            type="url"
+            value={linkUrl}
+            onChange={(e) => setLinkUrl(e.target.value)}
+            placeholder="https://example.com"
           />
-
-          <div className="space-y-2">
-            <label htmlFor="linkUrl" className="block text-sm font-medium text-gray-700">
-              URL du lien (optionnel)
-            </label>
-            <input
-              type="url"
-              id="linkUrl"
-              value={linkUrl}
-              onChange={(e) => setLinkUrl(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-magazine-red focus:border-magazine-red"
-              placeholder="https://example.com"
-            />
-          </div>
-
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="is-active"
-              checked={isActive}
-              onCheckedChange={setIsActive}
-            />
-            <Label htmlFor="is-active">Activer la bannière</Label>
-          </div>
         </div>
 
-        <ImagePreview imageUrl={imageUrl} file={file} />
+        <div className="flex items-center space-x-2">
+          <Switch
+            id="is-active"
+            checked={isActive}
+            onCheckedChange={setIsActive}
+          />
+          <Label htmlFor="is-active">Activer la bannière</Label>
+        </div>
 
         <Button type="submit" disabled={loading}>
           {loading ? "Mise à jour..." : "Mettre à jour la bannière"}

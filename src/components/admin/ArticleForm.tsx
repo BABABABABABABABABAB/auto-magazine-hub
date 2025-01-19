@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import { SEOSection } from "./article-form/SEOSection";
 import { PublishSection } from "./article-form/PublishSection";
 import { ArticleFormData } from "./article-form/types";
 import { useNavigate } from "react-router-dom";
-import imageCompression from "browser-image-compression";
+import { useImageCompression } from "@/hooks/useImageCompression";
 
 interface ArticleFormProps {
   initialData?: ArticleFormData;
@@ -26,22 +26,10 @@ export const ArticleForm = ({ initialData }: ArticleFormProps) => {
   });
   const { toast } = useToast();
   const navigate = useNavigate();
-
-  const compressImage = async (file: File): Promise<File> => {
-    const options = {
-      maxSizeMB: 0.03, // 30kb = 0.03MB (changed from 0.08)
-      maxWidthOrHeight: 1920,
-      useWebWorker: true,
-      fileType: 'image/webp',
-    };
-
-    try {
-      return await imageCompression(file, options);
-    } catch (error) {
-      console.error("Error compressing image:", error);
-      throw error;
-    }
-  };
+  const { uploadImage } = useImageCompression({
+    bucketName: "ui_images",
+    folderPath: "articles",
+  });
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -49,35 +37,14 @@ export const ArticleForm = ({ initialData }: ArticleFormProps) => {
 
     setUploading(true);
     try {
-      // Compress and convert the image
-      const compressedFile = await compressImage(file);
-      
-      const fileExt = 'webp'; // Always use WebP extension
-      const filePath = `${crypto.randomUUID()}.${fileExt}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('ui_images')
-        .upload(filePath, compressedFile);
-
-      if (uploadError) {
-        throw uploadError;
-      }
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('ui_images')
-        .getPublicUrl(filePath);
-
+      const publicUrl = await uploadImage(file);
       setValue('featured_image', publicUrl);
       toast({
         title: "Succès",
         description: "Image téléchargée avec succès",
       });
     } catch (error) {
-      toast({
-        title: "Erreur",
-        description: "Impossible de télécharger l'image",
-        variant: "destructive",
-      });
+      console.error("Error uploading image:", error);
     } finally {
       setUploading(false);
     }
