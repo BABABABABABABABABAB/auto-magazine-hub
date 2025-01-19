@@ -38,6 +38,7 @@ export const useArticles = (
 
         // Si une sous-catégorie est sélectionnée, on filtre par son ID
         if (selectedSubcategoryId) {
+          console.log("Filtering by subcategory ID:", selectedSubcategoryId);
           query = query.eq("subcategory_id", selectedSubcategoryId);
         } else if (selectedCategory && selectedCategory !== "Tout") {
           // Si pas de sous-catégorie mais une catégorie sélectionnée
