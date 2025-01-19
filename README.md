@@ -1,69 +1,77 @@
-# Welcome to your Lovable project
+# Auto Magazine Hub
 
-## Project info
+Un site web de magazine automobile moderne avec un système de gestion de contenu complet.
 
-**URL**: https://lovable.dev/projects/0689bae1-7d5a-4853-9669-182b70d7f28d
+## Fonctionnalités
 
-## How can I edit this code?
+- 🚗 Articles automobiles avec catégories et sous-catégories
+- 📱 Design responsive
+- 🖼️ Bannière principale personnalisable
+- 📊 Interface d'administration complète
+- 🔍 Filtrage par catégories
+- 📄 Pagination des articles
+- 🖼️ Compression automatique des images
+- 📱 Bannière verticale sur les pages d'articles
 
-There are several ways of editing your application.
+## Comment remixer ce projet ?
 
-**Use Lovable**
+1. Cliquez sur le bouton "Remix" en haut à droite de l'interface Lovable
+2. Un nouveau projet sera créé avec une copie de tout le code
+3. Suivez les étapes de configuration ci-dessous
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/0689bae1-7d5a-4853-9669-182b70d7f28d) and start prompting.
+## Configuration requise
 
-Changes made via Lovable will be committed automatically to this repo.
+1. **Base de données Supabase**
+   - Les tables seront automatiquement créées lors du remix
+   - Vérifiez que toutes les tables sont présentes dans l'éditeur SQL
+   - Les politiques RLS sont déjà configurées pour un accès public
 
-**Use your preferred IDE**
+2. **Stockage Supabase**
+   - Un bucket "ui_images" sera créé automatiquement
+   - Vérifiez qu'il est bien configuré en public
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+3. **Variables d'environnement**
+   - Les variables Supabase seront automatiquement configurées
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## Structure du projet
 
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+src/
+├── components/         # Composants réutilisables
+├── pages/             # Pages principales
+├── hooks/             # Hooks personnalisés
+└── integrations/      # Intégration Supabase
 ```
 
-**Edit a file directly in GitHub**
+## Technologies utilisées
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with .
-
-- Vite
+- React + Vite
 - TypeScript
-- React
-- shadcn-ui
 - Tailwind CSS
+- shadcn/ui
+- Supabase
+- TanStack Query
 
-## How can I deploy this project?
+## Personnalisation
 
-Simply open [Lovable](https://lovable.dev/projects/0689bae1-7d5a-4853-9669-182b70d7f28d) and click on Share -> Publish.
+1. **Couleurs**
+   - Les couleurs principales sont définies dans `tailwind.config.ts`
+   - Palette actuelle :
+     ```
+     magazine-black: "#000000"
+     magazine-red: "#FF0000"
+     magazine-gray: "#808080"
+     magazine-background: "#f3f3f3"
+     ```
 
-## I want to use a custom domain - is that possible?
+2. **Composants**
+   - Les composants UI sont basés sur shadcn/ui
+   - Facilement personnalisables via Tailwind CSS
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+## Support
+
+Si vous avez des questions sur ce template, rejoignez la [communauté Lovable sur Discord](https://discord.gg/lovable).
+
+## Licence
+
+Ce projet est sous licence MIT. Vous pouvez l'utiliser librement pour vos projets personnels ou commerciaux.
