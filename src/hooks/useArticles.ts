@@ -18,8 +18,12 @@ export const useArticles = (
     const fetchArticles = async () => {
       try {
         setIsLoading(true);
-        console.log("Fetching articles with category:", selectedCategory);
+        console.log("Selected category:", selectedCategory);
         console.log("Selected subcategory ID:", selectedSubcategoryId);
+
+        // Calculate pagination range
+        const start = (currentPage - 1) * ARTICLES_PER_PAGE;
+        const end = start + ARTICLES_PER_PAGE - 1;
 
         let query = supabase
           .from("articles")
@@ -34,7 +38,9 @@ export const useArticles = (
               )
             )
           `, { count: 'exact' })
-          .eq("hidden", false);
+          .eq("hidden", false)
+          .order("created_at", { ascending: false })
+          .range(start, end);
 
         // Si une sous-catégorie est sélectionnée, on filtre par son ID
         if (selectedSubcategoryId) {
@@ -45,20 +51,11 @@ export const useArticles = (
           query = query.eq("subcategories.categories.name", selectedCategory);
         }
 
-        // Calculate pagination range
-        const start = (currentPage - 1) * ARTICLES_PER_PAGE;
-        const end = start + ARTICLES_PER_PAGE - 1;
-
-        // Get paginated results with count
-        const { data, error, count } = await query
-          .range(start, end)
-          .order("created_at", { ascending: false });
+        const { data, error, count } = await query;
 
         if (error) {
           throw error;
         }
-
-        setTotalPages(Math.ceil((count || 0) / ARTICLES_PER_PAGE));
 
         console.log("Fetched articles:", data);
 
@@ -72,6 +69,7 @@ export const useArticles = (
         }));
 
         setArticles(formattedArticles);
+        setTotalPages(Math.ceil((count || 0) / ARTICLES_PER_PAGE));
       } catch (error) {
         console.error("Error fetching articles:", error);
         toast({
