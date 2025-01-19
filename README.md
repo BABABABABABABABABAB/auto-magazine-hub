@@ -2,44 +2,32 @@
 
 Un site web de magazine automobile moderne avec un système de gestion de contenu complet.
 
-## Fonctionnalités
+## Guide de collaboration
 
-- 🚗 Articles automobiles avec catégories et sous-catégories
-- 📱 Design responsive
-- 🖼️ Bannière principale personnalisable
-- 📊 Interface d'administration complète
-- 🔍 Filtrage par catégories
-- 📄 Pagination des articles
-- 🖼️ Compression automatique des images
-- 📱 Bannière verticale sur les pages d'articles
+### Pour les nouveaux collaborateurs
 
-## Comment remixer ce projet ?
+1. **Accéder au projet**
+   - Connectez-vous à votre compte Lovable
+   - Accédez à l'URL du projet partagée par votre équipe
+   - Cliquez sur le bouton "Remix" en haut à droite
+   - Un nouveau projet sera créé avec une copie de tout le code
 
-1. Cliquez sur le bouton "Remix" en haut à droite de l'interface Lovable
-2. Un nouveau projet sera créé avec une copie de tout le code
-3. Suivez les étapes de configuration ci-dessous
-
-## Configuration requise
-
-1. **Base de données Supabase**
+2. **Configuration de votre environnement**
    - Créez un nouveau projet sur [Supabase](https://supabase.com)
    - Copiez l'URL et la clé anon de votre projet
-   - Les tables seront automatiquement créées lors du remix
-   - Vérifiez que toutes les tables sont présentes dans l'éditeur SQL :
-     - articles
-     - categories
-     - subcategories
-     - home_settings
-     - vertical_banner_settings
+   - Configurez les variables d'environnement dans Lovable :
+     - VITE_SUPABASE_URL
+     - VITE_SUPABASE_ANON_KEY
 
-2. **Stockage Supabase**
-   - Créez un bucket "ui_images"
-   - Configurez-le en accès public
+3. **Configuration Supabase**
+   - Les tables seront automatiquement créées
+   - Créez un bucket "ui_images" en accès public
    - Activez la compression automatique des images
 
-3. **Variables d'environnement**
-   - VITE_SUPABASE_URL : URL de votre projet Supabase
-   - VITE_SUPABASE_ANON_KEY : Clé anon de votre projet Supabase
+4. **Vérification**
+   - Testez que vous pouvez accéder à l'interface d'administration
+   - Vérifiez que vous pouvez créer/modifier des articles
+   - Testez le téléchargement d'images
 
 ## Structure du projet
 
