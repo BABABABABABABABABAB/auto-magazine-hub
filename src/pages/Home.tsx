@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { Banner } from "@/components/home/Banner";
 import { MainContent } from "@/components/home/MainContent";
-import { PaginationControls } from "@/components/home/Pagination";
 import { useArticles } from "@/hooks/useArticles";
 import { useSearchParams } from "react-router-dom";
 
@@ -76,6 +75,11 @@ const Home = () => {
     }
   };
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className="min-h-screen bg-[#222222] text-white">
       {/* Logo Bar */}
@@ -106,22 +110,14 @@ const Home = () => {
       {isLoading ? (
         <div className="container mx-auto py-8 text-center">Chargement...</div>
       ) : (
-        <>
-          <MainContent
-            selectedCategory={selectedCategory}
-            articles={articles}
-            selectedSubcategoryName={selectedSubcategoryName}
-          />
-          {selectedCategory && (
-            <div className="container mx-auto">
-              <PaginationControls
-                currentPage={currentPage}
-                totalPages={totalPages}
-                setCurrentPage={setCurrentPage}
-              />
-            </div>
-          )}
-        </>
+        <MainContent
+          selectedCategory={selectedCategory}
+          articles={articles}
+          selectedSubcategoryName={selectedSubcategoryName}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
       )}
     </div>
   );

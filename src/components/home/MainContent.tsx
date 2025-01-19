@@ -6,9 +6,19 @@ interface MainContentProps {
   selectedCategory: string | null;
   articles: any[];
   selectedSubcategoryName?: string | null;
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
 }
 
-export const MainContent = ({ selectedCategory, articles, selectedSubcategoryName }: MainContentProps) => {
+export const MainContent = ({ 
+  selectedCategory, 
+  articles, 
+  selectedSubcategoryName,
+  currentPage,
+  totalPages,
+  onPageChange
+}: MainContentProps) => {
   if (selectedCategory) {
     const title = selectedSubcategoryName 
       ? `${selectedCategory} • ${selectedSubcategoryName}`
@@ -20,7 +30,13 @@ export const MainContent = ({ selectedCategory, articles, selectedSubcategoryNam
           {title}
         </h2>
         <Separator className="bg-magazine-red h-1" />
-        <ArticleGrid articles={articles} isCategory={true} />
+        <ArticleGrid 
+          articles={articles} 
+          isCategory={true} 
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={onPageChange}
+        />
       </div>
     );
   }
