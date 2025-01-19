@@ -62,7 +62,6 @@ export const CategoryFilter = ({
     event.stopPropagation();
     if (onSelectSubcategory) {
       onSelectSubcategory(subcategoryId);
-      // Ne pas réinitialiser la catégorie sélectionnée
       onSelectCategory(category);
       setIsMobileMenuOpen(false);
     }
