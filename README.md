@@ -22,22 +22,34 @@ Un site web de magazine automobile moderne avec un système de gestion de conten
 ## Configuration requise
 
 1. **Base de données Supabase**
+   - Créez un nouveau projet sur [Supabase](https://supabase.com)
+   - Copiez l'URL et la clé anon de votre projet
    - Les tables seront automatiquement créées lors du remix
-   - Vérifiez que toutes les tables sont présentes dans l'éditeur SQL
-   - Les politiques RLS sont déjà configurées pour un accès public
+   - Vérifiez que toutes les tables sont présentes dans l'éditeur SQL :
+     - articles
+     - categories
+     - subcategories
+     - home_settings
+     - vertical_banner_settings
 
 2. **Stockage Supabase**
-   - Un bucket "ui_images" sera créé automatiquement
-   - Vérifiez qu'il est bien configuré en public
+   - Créez un bucket "ui_images"
+   - Configurez-le en accès public
+   - Activez la compression automatique des images
 
 3. **Variables d'environnement**
-   - Les variables Supabase seront automatiquement configurées
+   - VITE_SUPABASE_URL : URL de votre projet Supabase
+   - VITE_SUPABASE_ANON_KEY : Clé anon de votre projet Supabase
 
 ## Structure du projet
 
 ```
 src/
 ├── components/         # Composants réutilisables
+│   ├── ui/            # Composants UI de base (shadcn/ui)
+│   ├── home/          # Composants de la page d'accueil
+│   ├── article/       # Composants des pages d'articles
+│   └── admin/         # Composants de l'interface admin
 ├── pages/             # Pages principales
 ├── hooks/             # Hooks personnalisés
 └── integrations/      # Intégration Supabase
@@ -68,9 +80,33 @@ src/
    - Les composants UI sont basés sur shadcn/ui
    - Facilement personnalisables via Tailwind CSS
 
+3. **Images**
+   - Taille maximale recommandée : 1920x1080px
+   - Compression automatique à 90ko
+   - Formats supportés : JPG, PNG, WebP
+
+4. **Bannières**
+   - Bannière principale : 1920x400px recommandé
+   - Bannière verticale : 300x600px recommandé
+
+## Dépendances principales
+
+```json
+{
+  "@supabase/supabase-js": "^2.47.12",
+  "@tanstack/react-query": "^5.56.2",
+  "browser-image-compression": "^2.0.2",
+  "date-fns": "^3.6.0",
+  "lucide-react": "^0.462.0"
+}
+```
+
 ## Support
 
-Si vous avez des questions sur ce template, rejoignez la [communauté Lovable sur Discord](https://discord.gg/lovable).
+Si vous avez des questions sur ce template :
+1. Consultez la [documentation Lovable](https://docs.lovable.dev)
+2. Rejoignez la [communauté Lovable sur Discord](https://discord.gg/lovable)
+3. Consultez les [exemples de projets similaires](https://lovable.dev/templates)
 
 ## Licence
 
