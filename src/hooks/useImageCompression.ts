@@ -11,7 +11,7 @@ interface UseImageCompressionOptions {
 }
 
 export const useImageCompression = ({
-  maxSizeMB = 0.03,
+  maxSizeMB = 0.09,
   maxWidthOrHeight = 1920,
   bucketName,
   folderPath,
