@@ -20,6 +20,7 @@ export const CategoryFilter = ({
   const [subcategories, setSubcategories] = useState<Record<string, any[]>>({});
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
+  const [activeSubcategory, setActiveSubcategory] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchSubcategories = async () => {
@@ -63,12 +64,14 @@ export const CategoryFilter = ({
     console.log("Subcategory clicked:", subcategoryId, "Category:", category);
     if (onSelectSubcategory) {
       onSelectSubcategory(subcategoryId);
-      onSelectCategory(category);
+      setActiveSubcategory(subcategoryId);
       setIsMobileMenuOpen(false);
     }
   };
 
   const handleCategoryClick = (category: string | null) => {
+    setActiveSubcategory(null);
+    
     if (category === "Tout") {
       onSelectCategory(null);
       setIsMobileMenuOpen(false);
@@ -98,7 +101,8 @@ export const CategoryFilter = ({
                 <button
                   onClick={() => handleCategoryClick(category === "Tout" ? null : category)}
                   className={`text-sm font-medium px-4 transition-colors flex items-center gap-1 h-12 ${
-                    (category === "Tout" && !selectedCategory) || selectedCategory === category
+                    ((category === "Tout" && !selectedCategory) || 
+                    (selectedCategory === category && !activeSubcategory))
                       ? "text-magazine-red"
                       : "text-white hover:text-magazine-red"
                   }`}
@@ -164,7 +168,8 @@ export const CategoryFilter = ({
                   <button
                     onClick={() => handleCategoryClick(category === "Tout" ? null : category)}
                     className={`w-full text-left px-4 py-3 flex items-center justify-between ${
-                      (category === "Tout" && !selectedCategory) || selectedCategory === category
+                      ((category === "Tout" && !selectedCategory) || 
+                      (selectedCategory === category && !activeSubcategory))
                         ? "text-magazine-red"
                         : "text-gray-800"
                     } ${subcategories[category]?.length ? "cursor-pointer" : ""}`}
