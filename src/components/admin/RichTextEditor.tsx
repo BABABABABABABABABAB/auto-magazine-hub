@@ -82,15 +82,6 @@ export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
     }
   };
 
-  const handleVoiceTranscript = (text: string) => {
-    console.log("Transcription reçue:", text);
-    setPrompt(text);
-    if (text.trim()) {
-      console.log("Lancement de la génération...");
-      handleGenerateFromPrompt();
-    }
-  };
-
   const handleRegenerate = async () => {
     const content = editor.getHTML();
     if (!content) {
@@ -145,7 +136,6 @@ export const RichTextEditor = ({ value, onChange }: RichTextEditorProps) => {
       <PromptSection
         prompt={prompt}
         onPromptChange={setPrompt}
-        onVoiceTranscript={handleVoiceTranscript}
         onGenerate={handleGenerateFromPrompt}
         generating={generating}
       />
