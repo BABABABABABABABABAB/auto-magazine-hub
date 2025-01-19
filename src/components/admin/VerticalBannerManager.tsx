@@ -47,7 +47,7 @@ export const VerticalBannerManager = () => {
 
   const compressImage = async (file: File): Promise<File> => {
     const options = {
-      maxSizeMB: 0.08, // 80kb = 0.08MB
+      maxSizeMB: 0.03, // 30kb = 0.03MB
       maxWidthOrHeight: 1920,
       useWebWorker: true,
       fileType: 'image/webp', // Convert to WebP format

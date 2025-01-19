@@ -29,10 +29,10 @@ export const ArticleForm = ({ initialData }: ArticleFormProps) => {
 
   const compressImage = async (file: File): Promise<File> => {
     const options = {
-      maxSizeMB: 0.08, // 80kb = 0.08MB
+      maxSizeMB: 0.03, // 30kb = 0.03MB (changed from 0.08)
       maxWidthOrHeight: 1920,
       useWebWorker: true,
-      fileType: 'image/webp', // Convert to WebP format
+      fileType: 'image/webp',
     };
 
     try {
